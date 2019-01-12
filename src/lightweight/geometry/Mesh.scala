@@ -1,3 +1,5 @@
 package lightweight.geometry
 
-case class Mesh(mesh: Array[Triangle])
+import lightweight.Lamp
+
+case class Mesh(mesh: Array[Triangle], lamps: Array[Lamp])

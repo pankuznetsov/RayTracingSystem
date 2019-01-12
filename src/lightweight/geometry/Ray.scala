@@ -37,10 +37,15 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
 
   }
 
-  def projectToLamp(lamp: Vector3D): Vector3D = {
-    val originToLampMagnitude = (lamp - this.origin).magnitude
+  /* Tuple: Vector3D for projection location,
+    first Double for distance from ray origin to lamp
+    and second Double for distance from lamp to the projection.
+   */
+  def projectToLamp(lamp: Vector3D): (Vector3D, Double, Double) = {
+    val originToLamp = lamp - this.origin
+    val originToLampMagnitude = originToLamp.magnitude
     val projection = this.origin + this.direction * originToLampMagnitude
-    projection
+    (projection, originToLampMagnitude, (projection - lamp).magnitude)
   }
 
   override def toString = s"[origin: $origin, direction: $direction]"
