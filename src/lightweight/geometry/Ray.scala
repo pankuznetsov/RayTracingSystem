@@ -8,8 +8,9 @@ import scala.collection.mutable.ListBuffer
 
 case class Ray(origin: Vector3D, direction: Vector3D) {
 
-  def traceRay(mesh: Mesh, world: World, triangleIndex: Int): ((Int, Vector3D, Double), HashMap[VolumeOutput, Int]) = {
+  private def traceRay(mesh: Mesh, world: World, triangleIndex: Int): ((Int, Vector3D, Double), HashMap[VolumeOutput, Int]) = {
     var volumes: HashMap[VolumeOutput, Int] = HashMap.empty[VolumeOutput, Int]
+    var lamps: HashMap[Lamp, (Vector3D, Double, Double)] = HashMap.empty[Lamp, (Vector3D, Double , Double)]
     var index: Int = 0
     var hitPoint: Vector3D = null
     var time: Double = Double.PositiveInfinity
@@ -30,22 +31,15 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
         }
       }
     }
+    for (lamp <- mesh.lamps.indices) {
+
+    }
     ((index, hitPoint, time), volumes)
   }
 
-  def renderSample(): Color = {
+  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, bouncesLeft: Int): Color = {
+    val tracingResults = traceRay(mesh, world, triangleIndex)
 
-  }
-
-  /* Tuple: Vector3D for projection location,
-    first Double for distance from ray origin to lamp
-    and second Double for distance from lamp to the projection.
-   */
-  def projectToLamp(lamp: Vector3D): (Vector3D, Double, Double) = {
-    val originToLamp = lamp - this.origin
-    val originToLampMagnitude = originToLamp.magnitude
-    val projection = this.origin + this.direction * originToLampMagnitude
-    (projection, originToLampMagnitude, (projection - lamp).magnitude)
   }
 
   override def toString = s"[origin: $origin, direction: $direction]"
