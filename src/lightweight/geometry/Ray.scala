@@ -1,6 +1,6 @@
 package lightweight.geometry
 
-import lightweight.World
+import lightweight.{Lamp, World}
 import lightweight.nodes.{Color, VolumeOutput}
 
 import scala.collection.immutable.HashMap
@@ -35,6 +35,12 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
 
   def renderSample(): Color = {
 
+  }
+
+  def projectToLamp(lamp: Vector3D): Vector3D = {
+    val originToLampMagnitude = (lamp - this.origin).magnitude
+    val projection = this.origin + this.direction * originToLampMagnitude
+    projection
   }
 
   override def toString = s"[origin: $origin, direction: $direction]"
