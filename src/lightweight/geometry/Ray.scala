@@ -45,10 +45,6 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     val hitTheSurface = tracingResults._1
     val smokes = tracingResults._2
     val lamps = tracingResults._3
-    /* smokes.foreach { smoke => {
-      // Smokes
-    }}
-    */
     // Lamps
     var resultRed: Float = 0
     var resultGreen: Float = 0
