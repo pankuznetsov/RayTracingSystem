@@ -2,7 +2,7 @@ package lightweight.nodes
 
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 
-abstract case class Node(inputs: Array[Container], outputs: Array[Container]) {
+abstract class Node(inputs: Array[Container], outputs: Array[Container]) {
 
   final def run(mesh: Mesh, skySurface: SurfaceOutput, skyVolume: VolumeOutput, triangleIndex: Int, ray: Ray, hitPoint: Vector3D): Unit = {
     for (field <- inputs)
