@@ -1,3 +1,3 @@
 package lightweight.nodes
 
-class Color(red: Float, green: Float, blue: Float, force: Float) extends RootType()
+case class Color(red: scala.Float, green: scala.Float, blue: scala.Float) extends RootType()

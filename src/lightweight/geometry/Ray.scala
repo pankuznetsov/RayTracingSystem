@@ -1,6 +1,6 @@
 package lightweight.geometry
 
-import lightweight.{Lamp, World}
+import lightweight.{Lamp, PointLight, World}
 import lightweight.nodes.{Color, VolumeOutput}
 
 import scala.collection.immutable.HashMap
@@ -42,7 +42,25 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
 
   def renderSample(mesh: Mesh, world: World, triangleIndex: Int, bouncesLeft: Int): Color = {
     val tracingResults = traceRay(mesh, world, triangleIndex)
-    return null
+    val hitTheSurface = tracingResults._1
+    val smokes = tracingResults._2
+    val lamps = tracingResults._3
+    /* smokes.foreach { smoke => {
+      // Smokes
+    }}
+    */
+    // Lamps
+    var resultRed: Float = 0
+    var resultGreen: Float = 0
+    var resultBlue: Float = 0
+    lamps.foreach { lamp => {
+      mesh.lamps(lamp._1).output.run(mesh, world.skySurface, world.skyVolume, triangleIndex, this, hitTheSurface._2)
+      var color: Color = mesh.lamps(lamp._1).output.outputs(0).asInstanceOf[Color]
+      resultRed = resultRed + color.red
+      resultGreen = resultGreen + color.green
+      resultBlue = resultBlue + color.blue
+    }}
+    null
   }
 
   override def toString = s"[origin: $origin, direction: $direction]"

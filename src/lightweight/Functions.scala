@@ -1,6 +1,7 @@
 package lightweight
 
 import lightweight.geometry.Vector3D
+import lightweight.nodes.Color
 
 object Functions {
 

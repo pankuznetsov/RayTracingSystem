@@ -1,3 +1,3 @@
 package lightweight.nodes
 
-abstract case class RootType()
+abstract class RootType()
