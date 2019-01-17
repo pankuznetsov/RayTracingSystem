@@ -13,10 +13,15 @@ case class Glossy(override val inputs: Array[Container], override val outputs: A
     4. Normal vector
    */
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
-    val reflectedRay = Ray(hitPoint, ray.direction.reflect(mesh.mesh(triangleIndex).supportingPlane))
-    val resultRenderSample = reflectedRay.renderSample(mesh, world, 1, shadersLeft)
-    println(resultRenderSample._1)
-    val resultColor = if (inputs(0).content != null) resultRenderSample._2 / inputs(0).content.asInstanceOf[Color] else resultRenderSample._2
-    resultColor
+    val reflectedRay = Ray(hitPoint, ray.direction.reflect(mesh.mesh(triangleIndex).supportingPlane).invert)
+    val resultRenderSample = reflectedRay.renderSample(mesh, world, triangleIndex, shadersLeft)
+    // println(resultRenderSample._1)
+    /*
+    if (resultRenderSample._1) {
+      println("reflection")
+      outputs(0).content = Color(1.0f, 1.0f, 0.0f)
+    } else outputs(0).content = Color(0.0f, 1.0f, 1.0f)
+    */
+    outputs(0).content = if (inputs(0).content != null) resultRenderSample._2 / inputs(0).content.asInstanceOf[Color] else resultRenderSample._2
   }
 }

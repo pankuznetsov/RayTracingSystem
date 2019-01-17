@@ -57,7 +57,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
       return (true, mesh.lamps(tracingResults._1._1).output.outputs(0).content.asInstanceOf[Color])
     if (hitTheSurface._2 != null) {
       // println(s"hit: ${mesh.mesh(hitTheSurface._1).surface.outputs(0).content}")
-      println(s"hit: ${hitTheSurface._1}")
+      // println(s"hit: ${hitTheSurface._1}")
       return (true, mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color])
     } else
       return (false, Color(1.0f, 0, 0))
