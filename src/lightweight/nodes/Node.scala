@@ -1,15 +1,16 @@
 package lightweight.nodes
 
+import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 
 abstract class Node(val inputs: Array[Container], val outputs: Array[Container]) {
 
-  final def run(mesh: Mesh, skySurface: SurfaceOutput, skyVolume: VolumeOutput, triangleIndex: Int, ray: Ray, hitPoint: Vector3D): Unit = {
+  def run(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
     for (field <- inputs)
-      if (field != null)
-        field.parentNode.run(mesh: Mesh, skySurface, skyVolume, triangleIndex: Int, ray: Ray, hitPoint: Vector3D)
-    doThings(mesh, skySurface, skyVolume, triangleIndex, ray, hitPoint)
+      if (field != null && field.parentNode != null)
+        field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
+    doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
   }
 
-  def doThings(mesh: Mesh, skySurface: SurfaceOutput, skyVolume: VolumeOutput, triangleIndex: Int, ray: Ray, hitPoint: Vector3D): Unit
+  def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit
 }
