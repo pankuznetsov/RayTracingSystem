@@ -12,7 +12,7 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
       for(x: Int <- 0 until width){
         // val rayFromCamera = Ray(location + Vector3D(imageRatio._1 / width * x, imageRatio._2 / height * y, 0) - Vector3D(imageRatio._1 / 2, imageRatio._2, 0), Vector3D(0,0,1))
         val rayFromCamera = Ray(Vector3D(x, y, 0), Vector3D(0, 0, 1))
-        val resultOfTraceRay = rayFromCamera.renderSample(mesh: Mesh, world: World, -1, 8)
+        val resultOfTraceRay = rayFromCamera.renderSample(mesh: Mesh, world: World, -1, 8)._2
         // println(resultOfTraceRay)
         image(x)(y) = resultOfTraceRay
       }

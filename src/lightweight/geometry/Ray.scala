@@ -43,21 +43,24 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     ((index, hitPoint, time), volumes, lampProxima)
   }
 
-  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int): Color = {
+  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int): (Boolean, Color) = {
     val tracingResults = traceRay(mesh, world, triangleIndex)
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
     val lamp = tracingResults._3
-    // Lamps
-    if (hitTheSurface != null)
-      mesh.mesh(tracingResults._1._1).surface.run(mesh, world, triangleIndex, this, hitTheSurface._2, shadersLeft)
+    val newTriangleIndex = if (hitTheSurface != null) hitTheSurface._1 else -1
+    if (hitTheSurface._2 != null) {
+      // println(s"hitTheSurface: ${hitTheSurface}")
+      mesh.mesh(tracingResults._1._1).surface.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, shadersLeft)
+    }
     if (lamp != null)
-      return mesh.lamps(tracingResults._1._1).output.outputs(0).content.asInstanceOf[Color]
+      return (true, mesh.lamps(tracingResults._1._1).output.outputs(0).content.asInstanceOf[Color])
     if (hitTheSurface._2 != null) {
       // println(s"hit: ${mesh.mesh(hitTheSurface._1).surface.outputs(0).content}")
-      return mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color]
+      println(s"hit: ${hitTheSurface._1}")
+      return (true, mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color])
     } else
-      return Color(0, 0, 0)
+      return (false, Color(1.0f, 0, 0))
   }
 
   override def toString = s"[origin: $origin, direction: $direction]"
