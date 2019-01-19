@@ -38,5 +38,7 @@ case class Vector3D(x: Double, y: Double, z: Double) {
     cLength > 2
   }
 
+  def linearInterpolation(other: Vector3D, mix: Double): Vector3D = (this * (1 - mix)) + (other * mix)
+
   override def toString = s"[$x, $y, $z]"
 }

@@ -59,8 +59,10 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
       // println(s"hit: ${mesh.mesh(hitTheSurface._1).surface.outputs(0).content}")
       // println(s"hit: ${hitTheSurface._1}")
       return (true, mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color])
-    } else
-      return (false, Color(1.0f, 0, 0))
+    } else {
+      world.skySurface.run(mesh, world, -1, this, null, shadersLeft)
+      return (false, world.skySurface.outputs(0).content.asInstanceOf[Color])
+    }
   }
 
   override def toString = s"[origin: $origin, direction: $direction]"

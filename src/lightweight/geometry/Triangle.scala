@@ -1,5 +1,7 @@
 package lightweight.geometry
 
+import java.lang
+
 import lightweight.nodes.{SurfaceOutput, VolumeOutput}
 
 case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput) {
@@ -66,6 +68,14 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     val ca = (a - c).magnitude
     val semiPerimeter = (ab + bc + ca) / 2
     Math.sqrt(semiPerimeter * (semiPerimeter - ab) * (semiPerimeter - bc) * (semiPerimeter - ca))
+  }
+
+  def scatter(scattering: Double): Vector3D = {
+    val ab = (b - a).normalized
+    val bc = (c - b).normalized
+    val ca = (a - c).normalized
+    return ((supportingPlane.normal * Math.random()).linearInterpolation(
+      (supportingPlane.normal * Math.random() + ab * Math.random() + bc * Math.random() + ca * Math.random()).normalized, scattering)).normalized
   }
 
   def getBarycentric(point: Vector3D): (Double, Double, Double) = {
