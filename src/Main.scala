@@ -1,14 +1,20 @@
 import java.awt.Graphics
 
-import heavyweight.nodes.{Emission, Glossy}
+import heavyweight.nodes.{Diffuse, Emission, Glossy}
 import javax.swing.{JFrame, JPanel}
-import lightweight.{Camera, Lamp, PointLight, World}
+import lightweight.{Camera, Lamp, World}
 import lightweight.geometry._
 import lightweight.nodes.{Color, Container, SurfaceOutput, VolumeOutput}
 
 import scala.collection.immutable.HashMap
 
 object Main {
+
+  def quad(firstPoint: Vector3D, secondPoint: Vector3D, thirdPoint: Vector3D, binormal: Boolean, surface: SurfaceOutput, volume: VolumeOutput): (Triangle, Triangle) = {
+    val firstTriangle = Triangle(firstPoint, secondPoint, thirdPoint, binormal, surface, volume)
+    val secondTriangle = Triangle(firstPoint, firstPoint + thirdPoint - secondPoint, thirdPoint, binormal, surface, volume)
+    (firstTriangle, secondTriangle)
+  }
 
   def displayImage(image: Array[Array[lightweight.nodes.Color]], width: Int, height: Int): Unit = {
     val frame = new JFrame()
@@ -42,11 +48,11 @@ object Main {
     println(s"\t#4: random: ${triangle.scatter(0.75)}")
     println(s"\t#5: random: ${triangle.scatter(1.0)}")
     */
-    RayDistributor.generate(256)
+    RayDistributor.generate(2048)
 
     // World
     val worldEmissionInput = Array.ofDim[Container](1)
-    worldEmissionInput(0) = Container(null, lightweight.nodes.Color(0.1f, 0.2f, 0.7f))
+    worldEmissionInput(0) = Container(null, lightweight.nodes.Color(0.1f, 0.2f, 0.3f))
     // Emission Output
     val worldEmissionOut = Array.ofDim[Container](1)
     // Emission
@@ -64,7 +70,7 @@ object Main {
     // Emission triangle
     // Emission Input
     val emissionInput = Array.ofDim[Container](1)
-    emissionInput(0) = Container(null, lightweight.nodes.Color(0, 0.95f, 0))
+    emissionInput(0) = Container(null, lightweight.nodes.Color(0, 5.95f, 0))
     // Emission Output
     val emissionOut = Array.ofDim[Container](1)
     // Emission
@@ -79,7 +85,7 @@ object Main {
     // Second Emission triangle
     // Emission Input
     val secondEmissionInput = Array.ofDim[Container](1)
-    secondEmissionInput(0) = Container(null, lightweight.nodes.Color(2.5f, 0, 0))
+    secondEmissionInput(0) = Container(null, lightweight.nodes.Color(10.25f, 0, 0))
     // Emission Output
     val secondEmissionOut = Array.ofDim[Container](1)
     // Emission
@@ -91,11 +97,29 @@ object Main {
     val secondEmissionSurface = SurfaceOutput(secondEmissionOut, secondEmissionSurfaceOut)
     secondEmissionSurfaceOut(0) = Container(secondEmissionSurface, null)
 
+    // Diffuse material
+    val diffuseInput = Array.ofDim[Container](4)
+    diffuseInput(0) = Container(null, lightweight.nodes.Color(1.5f, 0.5f, 0.5f))
+    diffuseInput(1) = Container(null, lightweight.nodes.Numeric(1))
+    diffuseInput(2) = Container(null, lightweight.nodes.Numeric(1))
+    diffuseInput(3) = Container(null, null)
+    // Diffuse Output
+    val diffuseOut = Array.ofDim[Container](1)
+    // Emission
+    val diffuse = Diffuse(diffuseInput, diffuseOut)
+    diffuseOut(0) = Container(diffuse, lightweight.nodes.Color(0, 0, 0))
+    // Surface output
+    val difuseSurfaceOut = Array.ofDim[Container](1)
+    // Surface
+    val difusalSurface = SurfaceOutput(diffuseOut, difuseSurfaceOut)
+    difuseSurfaceOut(0) = Container(diffuse, null)
+
+
     // Glossy triangle
-    // Emission Input
+    // Glossy Input
     val glossyInput = Array.ofDim[Container](4)
     glossyInput(0) = Container(null, lightweight.nodes.Color(1, 1, 1))
-    glossyInput(1) = Container(null, lightweight.nodes.Numeric(0))
+    glossyInput(1) = Container(null, lightweight.nodes.Numeric(0.0f))
     glossyInput(2) = Container(null, lightweight.nodes.Numeric(1))
     glossyInput(3) = Container(null, null)
     // Glossy Output
@@ -108,14 +132,18 @@ object Main {
     // Surface
     val surface = SurfaceOutput(glossyOut, surfaceOut)
     surfaceOut(0) = Container(surface, null)
+
     // Triangles
     val firstTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, emissionSurface, null).move(Vector3D(40, 70, 0))
-    val secondTriangle = Triangle(Vector3D(-40, 20, 40), Vector3D(0, -40, 120), Vector3D(40, 20, 40), true, surface, null).move(Vector3D(40, 70, 0))
-    val thirdTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, secondEmissionSurface, null).move(Vector3D(10, 70, 1))
+    val plane = quad(Vector3D(-40, 20, 40), Vector3D(0, -40, 120), Vector3D(40, 20, 40), true, surface, null)
+    //val secondTriangle = Triangle(Vector3D(-40, 20, 40), Vector3D(0, -40, 120), Vector3D(40, 20, 40), true, surface, null).move(Vector3D(40, 70, 0))
+    val secondTriangle: Triangle = plane._1.move(Vector3D(30, 70, 2))
+    val thirdTriangle: Triangle = plane._2.move(Vector3D(30, 70, 2))
+    val fourthTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, secondEmissionSurface, null).move(Vector3D(10, 70, -5))
     // Mesh
-    val mesh = Mesh(Array(firstTriangle, secondTriangle, thirdTriangle), Array[Lamp]())
+    val mesh = Mesh(Array(firstTriangle, secondTriangle, thirdTriangle, fourthTriangle), Array[Lamp]())
     val camera = Camera(null, null, 1, 480, 320)
-    val image = camera.render(mesh, world)
+    val image = camera.render(mesh, world, 8)
     displayImage(image, 480, 320)
   }
 }

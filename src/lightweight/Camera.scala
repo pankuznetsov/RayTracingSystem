@@ -5,16 +5,19 @@ import lightweight.nodes.Color
 
 case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width: Int, height: Int) {
 
-  def render(mesh: Mesh, world: World): Array[Array[Color]] = {
+  def render(mesh: Mesh, world: World, samples: Int): Array[Array[Color]] = {
     val imageRatio = ratio(width, height)
     val image = Array.ofDim[Color](width, height)
     for(y: Int <- 0 until height){
       for(x: Int <- 0 until width){
         // val rayFromCamera = Ray(location + Vector3D(imageRatio._1 / width * x, imageRatio._2 / height * y, 0) - Vector3D(imageRatio._1 / 2, imageRatio._2, 0), Vector3D(0,0,1))
-        val rayFromCamera = Ray(Vector3D(x / 2, y / 2, 0), Vector3D(0, 0, 1))
-        val resultOfTraceRay = rayFromCamera.renderSample(mesh: Mesh, world: World, -1, 8)._2
-        // println(resultOfTraceRay)
-        image(x)(y) = resultOfTraceRay
+        var pixel = Color(0, 0, 0)
+        for (sampleY: Int <- 0 until samples)
+          for (sampleX: Int <- 0 until samples) {
+            val rayFromCamera = Ray(Vector3D((x / 2) + sampleX.asInstanceOf[Double] / samples + Math.random() / samples, (y / 2) + sampleY.asInstanceOf[Double] / samples + Math.random() / samples, 0), Vector3D(0, 0, 1))
+            pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, 8)._2
+          }
+        image(x)(y) = pixel / (samples * samples)
       }
     }
     image
