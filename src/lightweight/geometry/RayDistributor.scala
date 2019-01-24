@@ -28,4 +28,8 @@ object RayDistributor {
     }
     list.toArray[Vector3D]
   }
+
+  def getRandomVector3D(): Vector3D = rays((Math.random() * rays.length).asInstanceOf[Int])
+
+  def newRandomVector3D(): Vector3D = Vector3D(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalized
 }
