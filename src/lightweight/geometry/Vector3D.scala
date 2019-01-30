@@ -4,15 +4,15 @@ import scala.math.{pow, sqrt}
 
 case class Vector3D(x: Double, y: Double, z: Double) {
 
-  def +(other: Vector3D) = new Vector3D(x + other.x, y + other.y, z + other.z)
-  def -(other: Vector3D) = new Vector3D(x - other.x, y - other.y, z - other.z)
-  def *(other: Vector3D) = new Vector3D(x * other.x, y * other.y, z * other.z)
-  def *(scalar: Double) = new Vector3D(x * scalar, y * scalar, z * scalar)
-  def /(other: Vector3D) = new Vector3D(x / other.x, y / other.y, z / other.z)
+  def +(other: Vector3D) = Vector3D(x + other.x, y + other.y, z + other.z)
+  def -(other: Vector3D) = Vector3D(x - other.x, y - other.y, z - other.z)
+  def *(other: Vector3D) = Vector3D(x * other.x, y * other.y, z * other.z)
+  def *(scalar: Double) = Vector3D(x * scalar, y * scalar, z * scalar)
+  def /(other: Vector3D) = Vector3D(x / other.x, y / other.y, z / other.z)
 
   def dotProduct(other: Vector3D) = x * other.x + y * other.y + z * other.z
 
-  def crossProduct(other: Vector3D) = new Vector3D(
+  def crossProduct(other: Vector3D) = Vector3D(
     y * other.z - z * other.y,
     z * other.x - x * other.z,
     x * other.y - y * other.x
@@ -22,7 +22,7 @@ case class Vector3D(x: Double, y: Double, z: Double) {
 
   def normalized: Vector3D = {
     val module: Double = magnitude
-    new Vector3D(x / module, y / module, z / module)
+    Vector3D(x / module, y / module, z / module)
   }
 
   def reflect(plane: Plane): Vector3D = {

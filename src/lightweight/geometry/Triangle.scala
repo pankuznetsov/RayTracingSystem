@@ -4,15 +4,17 @@ import java.lang
 
 import lightweight.nodes.{SurfaceOutput, VolumeOutput}
 
-case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput) {
+import scala.collection.immutable.HashMap
+
+case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UWMap, UWCoordinates]) {
 
   val supportingPlane: Plane = Plane(a, getNormal())
 
-  def move(displacement: Vector3D) = new Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume)
+  def move(displacement: Vector3D) = new Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume, uwCoordinates)
 
-  def scale(zoom: Double) = new Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume)
+  def scale(zoom: Double) = new Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
-  def scale(zoom: Vector3D) = new Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume)
+  def scale(zoom: Vector3D) = new Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
   def getNormal(): Vector3D = ((b - a) crossProduct (c - a)).normalized
 
