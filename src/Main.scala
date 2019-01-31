@@ -1,13 +1,13 @@
 import java.awt.Graphics
 
 import heavyweight.lights.PointLight
-import heavyweight.nodes.{Diffuse, Emission, Glossy}
+import heavyweight.nodes.{Diffuse, Emission, GetUV, Glossy}
 import javax.swing.{JFrame, JPanel}
-import lightweight.{Camera, Lamp, World}
+import lightweight.{Camera, Functions, Lamp, World}
 import lightweight.geometry._
 import lightweight.nodes._
-import scala.io.Source._
 
+import scala.io.Source._
 import scala.collection.immutable.HashMap
 
 object Main {
@@ -45,11 +45,24 @@ object Main {
 
   def main(args: Array[String]): Unit = {
 
-    val triangle = Triangle(Vector3D(0, 0, 0), Vector3D(0, 1, 0), Vector3D(1, 0, 0), true, null, null, null)
-    println(triangle.getBarycentric(Vector3D(0, 0, 0)))
-
-    /*
     RayDistributor.generate(2048)
+
+    // UV Map
+    val map = UVMap("map_zero")
+    val uvw = UVCoordinates(Vector2D(0,0),Vector2D(1,0),Vector2D(0,1))
+    // Surface output
+    val testSurfaceOut = Array.ofDim[Container](1)
+    // GetUV node
+    val getUVInputs = null
+    val getUVOutputs = Array.ofDim[Container](1)
+    val getUVNode = GetUV(getUVInputs, getUVOutputs, map)
+     getUVOutputs(0) = Container(getUVNode, null)
+    // Surface
+    val testSurface = SurfaceOutput(getUVOutputs, testSurfaceOut)
+    testSurfaceOut(0) = Container(testSurface, null)
+
+    val uvCoordinates = UVCoordinates(Vector2D(0, 0), Vector2D(1, 0), Vector2D(0, 1))
+    // val triangle = Triangle(Vector3D(1, 1, 0), Vector3D(1, 2, 0), Vector3D(2, 1, 0), true, testSurface, null, HashMap(UVMap("map_0") -> uvw))
 
     // World
     val worldEmissionInput = Array.ofDim[Container](1)
@@ -115,7 +128,6 @@ object Main {
     val difusalSurface = SurfaceOutput(diffuseOut, difuseSurfaceOut)
     difuseSurfaceOut(0) = Container(diffuse, null)
 
-
     // Glossy triangle
     // Glossy Input
     val glossyInput = Array.ofDim[Container](4)
@@ -137,15 +149,14 @@ object Main {
     // Triangles
     val firstTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, emissionSurface, null, null).move(Vector3D(40, 140, -55))
     val plane = quad(Vector3D(-40, 20, 40), Vector3D(0, -40, 120), Vector3D(40, 20, 40), true, difusalSurface, null)
-    //val secondTriangle = Triangle(Vector3D(-40, 20, 40), Vector3D(0, -40, 120), Vector3D(40, 20, 40), true, surface, null).move(Vector3D(40, 70, 0))
+    //val secondTriangle = Triangle(Vector3D(-40, 20, 40), Vector3D(0, -40, 120), Vector3D(40, 20, 40), true, surface, null, HashMap(map -> uvCoordinates)).move(Vector3D(40, 70, 0))
     val secondTriangle: Triangle = plane._1.move(Vector3D(30, 70, 0))
     val thirdTriangle: Triangle = plane._2.move(Vector3D(30, 70, 0))
-    val fourthTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, secondEmissionSurface, null, null).move(Vector3D(20, 70, -5))
+    val fourthTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, secondEmissionSurface, null, HashMap(map -> uvCoordinates)).move(Vector3D(20, 70, -5))
     // Mesh
     val mesh = Mesh(Array(firstTriangle, secondTriangle, thirdTriangle), Array[Lamp](PointLight(Vector3D(105, 30, 5), 32, 1000, LampOutput(secondEmissionOut, secondEmissionSurfaceOut), true, 4)))
     val camera = Camera(null, null, 1, 380, 320)
     val image = camera.render(mesh, world, 12)
     displayImage(image, 380, 320)
-    */
   }
 }

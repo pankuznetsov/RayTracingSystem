@@ -6,7 +6,7 @@ import lightweight.nodes.{SurfaceOutput, VolumeOutput}
 
 import scala.collection.immutable.HashMap
 
-case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UWMap, UWCoordinates]) {
+case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UVMap, UVCoordinates]) {
 
   val supportingPlane: Plane = Plane(a, getNormal())
 
@@ -81,19 +81,10 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
   }
 
   def getBarycentric(point: Vector3D): (Double, Double, Double) = {
-    val vZero = b - a
-    val vFirst = c - b
-    val vSecond = point - a
-    val dZeroToZero = vZero dotProduct vZero
-    val dZeroToFirst = vZero dotProduct vFirst
-    val dFirstToFirst = vFirst dotProduct vFirst
-    val dSecondToZero = vSecond dotProduct vZero
-    val dSecondToFirst = vSecond dotProduct vFirst
-    val denominator = dZeroToZero * dFirstToFirst - dZeroToFirst * dZeroToFirst
-    val v = (dFirstToFirst * dSecondToZero - dZeroToFirst * dSecondToFirst) / denominator
-    val w = (dZeroToZero * dSecondToFirst - dZeroToFirst * dSecondToZero) / denominator
-    val u = 1 - v - w
-    (u, v, w)
+    val lambdaZero = ((b.y - c.y) * (point.x - c.x) + (c.x - b.x) * (point.y - c.y)) / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y))
+    val lambdaOne = ((c.y - a.y) * (point.x - c.x) + (a.x - c.x) * (point.y - c.y)) / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y))
+    val lambdaTwo = 1 - lambdaZero - lambdaOne
+    (lambdaZero, lambdaOne, lambdaTwo)
   }
 
   override def toString = s"[a: $a, b: $b, c: $c]"

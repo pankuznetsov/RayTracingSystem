@@ -1,8 +1,10 @@
 package lightweight.geometry
 
+import lightweight.nodes.RootType
+
 import scala.math.{pow, sqrt}
 
-case class Vector2D(x: Double, y: Double) {
+case class Vector2D(x: Double, y: Double) extends RootType() {
 
   def +(other: Vector2D) = Vector2D(x + other.x, y + other.y)
   def -(other: Vector2D) = Vector2D(x - other.x, y - other.y)

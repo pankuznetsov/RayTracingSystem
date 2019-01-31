@@ -1,3 +1,3 @@
 package lightweight.geometry
 
-case class UWMap(name: String)
+case class UVMap(name: String)
