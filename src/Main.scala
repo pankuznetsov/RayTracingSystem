@@ -45,6 +45,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
 
+    // BSDF rays generation
     RayDistributor.generate(2048)
 
     val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.1f, 0.6f)))
