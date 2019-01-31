@@ -6,7 +6,7 @@ import lightweight.nodes.{Color, Container, Node, Numeric}
 
 case class Diffuse(override val inputs: Array[Container], override val outputs: Array[Container]) extends Node(inputs, outputs) {
 
-  /* The Glossy shader's inputs are:
+  /* The Diffuse shader's inputs are:
     1. Color
     2. Roughness
     3. Number of rays scattered

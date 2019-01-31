@@ -16,7 +16,7 @@ case class GetUV(override val inputs: Array[Container], override val outputs: Ar
       println(s"GetUV, cartesian: ${cartesian}")
       outputs(0).content = cartesian
     } else {
-      throw NullPointerException
+      throw new NullPointerException
     }
   }
 }
