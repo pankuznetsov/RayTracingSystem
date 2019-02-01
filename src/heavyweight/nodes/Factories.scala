@@ -1,5 +1,8 @@
 package heavyweight.nodes
 
+import java.awt.image.BufferedImage
+
+import lightweight.geometry.UVMap
 import lightweight.nodes._
 
 object Factories {
@@ -74,5 +77,22 @@ object Factories {
     val glossy = Glossy(glossyInput, glossyOut)
     glossyOut(0) = Container(glossy, lightweight.nodes.Color(0, 0, 0))
     return glossy
+  }
+
+  def newGetUV(uvMap: UVMap): GetUV = {
+    val getUVInput = Array.ofDim[Container](0)
+    val getUVOut = Array.ofDim[Container](1)
+    val getUV = GetUV(getUVInput, getUVOut, uvMap)
+    getUVOut(0) = Container(getUV, null)
+    return getUV
+  }
+
+  def newImageTexture(coordinates: Container, image: BufferedImage): ImageTexture = {
+    val imageTextureInput = Array.ofDim[Container](1)
+    imageTextureInput(0) = coordinates
+    val imageTextureOut = Array.ofDim[Container](1)
+    val imageTexture = ImageTexture(imageTextureInput, imageTextureOut, image)
+    imageTextureOut(0) = Container(imageTexture, null)
+    return imageTexture
   }
 }

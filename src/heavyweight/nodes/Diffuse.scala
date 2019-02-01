@@ -33,7 +33,7 @@ case class Diffuse(override val inputs: Array[Container], override val outputs: 
       green = green + (rayColor._2.green / scattering.length)
       blue = blue + (rayColor._2.blue / scattering.length)
     }
-    val integral = throwToLights(mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
+    val integral = throwToLights(mesh, world, triangleIndex, ray, hitPoint, normal, shadersLeft)
     // println(s"final color: ${Color(red, green, blue)}")
     val finalColor = (Color(red, green, blue) * scattering.length + integral._2 * integral._1) / (scattering.length + integral._1)
     outputs(0).content = if (inputs(0).content != null) finalColor * color else finalColor

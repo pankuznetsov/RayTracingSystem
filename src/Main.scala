@@ -1,7 +1,10 @@
-import java.awt.Graphics
+import java.awt.image.BufferedImage
+import java.awt.{Graphics, Image}
+import java.io.{File, IOException}
 
 import heavyweight.lights.PointLight
 import heavyweight.nodes._
+import javax.imageio.ImageIO
 import javax.swing.{JFrame, JPanel}
 import lightweight.{Camera, Functions, Lamp, World}
 import lightweight.geometry._
@@ -52,10 +55,20 @@ object Main {
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null)
 
-    val emission = Factories.newEmission(Container(null, Color(1.5f, 0.5f, 0.5f)))
+    val map = UVMap("map_zero")
+    val pathToFile = new File("C:\\Users\\Kuznetsov Sergey\\Downloads\\palpatine.jpg")
+    val picture: BufferedImage = ImageIO.read(pathToFile)
+
+    val getUV = Factories.newGetUV(map)
+    val texture = Factories.newImageTexture(getUV.outputs(0), picture)
+    val emission = Factories.newEmission(texture.outputs(0))
     val emissionSurface = Factories.newSurfaceOutput(emission.outputs(0))
 
-    val firstTriangle = Triangle(Vector3D(0, -60, 100), Vector3D(-20, -40, 60), Vector3D(20, -40, 60), true, emissionSurface, null, null).move(Vector3D(40, 140, -55))
+    val firstTriangle = Triangle(Vector3D(10, 10, 100),
+      Vector3D(10 + 160, 10, 100),
+      Vector3D(10, 10 + 128, 60),
+      true, emissionSurface, null,
+      HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(20, 20), Vector2D(20 + 420, 0), Vector2D(0, 20 + 310))))
 
     // Mesh
     val mesh = Mesh(Array(firstTriangle), Array.ofDim[Lamp](0))

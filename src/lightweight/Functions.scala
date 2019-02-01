@@ -12,7 +12,7 @@ object Functions {
     val red = (rgb & 0x00ff0000) >> 16
     val green = (rgb & 0x0000ff00) >> 8
     val blue = (rgb & 0x000000ff) >> 0
-    return lightweight.nodes.Color(red, green, blue)
+    return lightweight.nodes.Color(red, green, blue) / 256
   }
 
   def barycentricToCartesian(uwCoordinates: UVCoordinates, uvw: (Double, Double, Double)): Vector2D =

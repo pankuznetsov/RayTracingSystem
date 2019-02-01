@@ -13,7 +13,7 @@ case class GetUV(override val inputs: Array[Container], override val outputs: Ar
       val uvCoordinates: UVCoordinates = triangleUVCoordinatesOnTheMap.get
       val barycentric = triangle.getBarycentric(hitPoint)
       val cartesian = Functions.barycentricToCartesian(uvCoordinates, barycentric)
-      println(s"GetUV, cartesian: ${cartesian}")
+      // println(s"GetUV, cartesian: ${cartesian}")
       outputs(0).content = cartesian
     } else {
       throw new NullPointerException
