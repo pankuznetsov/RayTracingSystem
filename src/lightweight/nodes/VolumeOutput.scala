@@ -11,7 +11,7 @@ case class VolumeOutput(override val inputs: Array[Container], override val outp
         if (field != null)
           field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
       doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
-    }
+    } else println("recursion end: lamp")
   }
 
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {

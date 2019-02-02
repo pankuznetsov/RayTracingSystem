@@ -87,5 +87,5 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     (lambdaZero, lambdaOne, lambdaTwo)
   }
 
-  override def toString = s"[a: $a, b: $b, c: $c]"
+  override def toString = s"[a: \t$a, b: \t$b, c: \t$c] -> \t${supportingPlane.normal}"
 }

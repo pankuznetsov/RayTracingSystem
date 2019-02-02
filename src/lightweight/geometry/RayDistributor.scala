@@ -1,10 +1,11 @@
 package lightweight.geometry
 
 import scala.collection.mutable.ListBuffer
+import scala.util.Random
 
 object RayDistributor {
 
-  var rays: Array[Vector3D] = null
+  var rays: Array[Vector3D] = _
 
   def generate(n: Int): Unit = {
     rays = Array.ofDim[Vector3D](n)
@@ -13,18 +14,13 @@ object RayDistributor {
     }
   }
 
-  def getOne(normal: Vector3D): Array[Vector3D] = {
-    var list: ListBuffer[Vector3D] = ListBuffer[Vector3D]()
-    for (i <- rays)
-      if (i.sameDirection(normal))
-        list += i
-    list.toArray[Vector3D]
-  }
-
   def getRandomRays(normal: Vector3D, vector: Vector3D, n: Int, scattering: Double): Array[Vector3D] = {
     var list: ListBuffer[Vector3D] = ListBuffer[Vector3D]()
+    val random = new Random()
     while (list.length < n) {
-      list += vector.linearInterpolation(rays((Math.random() * rays.length).asInstanceOf[Int]), scattering).normalized
+      val random = vector.linearInterpolation(getRandomVector3D(), scattering).normalized
+      if (random.sameDirection(normal))
+        list += random
     }
     list.toArray[Vector3D]
   }

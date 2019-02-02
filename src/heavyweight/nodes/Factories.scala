@@ -25,6 +25,15 @@ object Factories {
     return volume
   }
 
+  def newLampOutput(color: Container): LampOutput = {
+    val inputs = Array.ofDim[Container](1)
+    inputs(0) = color
+    val outputs = Array.ofDim[Container](1)
+    val lamp = LampOutput(inputs, outputs)
+    outputs(0) = Container(lamp, null)
+    return lamp
+  }
+
   def newSkySurface(color: Container): SurfaceOutput = {
     val inputs = Array.ofDim[Container](1)
     inputs(0) = color

@@ -11,7 +11,7 @@ case class SurfaceOutput(override val inputs: Array[Container], override val out
         if (field != null)
           field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
       doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
-    }
+    } else println("recursion bound: surface")
   }
 
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {

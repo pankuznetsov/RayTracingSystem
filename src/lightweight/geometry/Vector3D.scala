@@ -37,7 +37,7 @@ case class Vector3D(x: Double, y: Double, z: Double) extends RootType() {
   def sameDirection(other: Vector3D): Boolean = {
     val c = this + other
     val cLength: Double = pow(c.x, 2) + pow(c.y, 2) + pow(c.z, 2)
-    cLength > 2
+    cLength > 2.0 + Constants.EPSILON
   }
 
   def linearInterpolation(other: Vector3D, mix: Double): Vector3D = (this * (1 - mix)) + (other * mix)

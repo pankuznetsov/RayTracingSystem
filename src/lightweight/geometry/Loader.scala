@@ -129,23 +129,18 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
   private def parseLine(): Unit = {
     if (rawObj.charAt(pointer).equals(Strings.COMMENT.charAt(0))) {
       pointer += 1
-      println("comment")
       skipToNewLine()
     } else if (rawObj.charAt(pointer).equals(Strings.VERTEX.charAt(0)) && rawObj.charAt(pointer + 1).equals(Strings.VERTEX_NORMALS.charAt(1))) {
       pointer += 1
-      println("vertex normal")
       parseVertex()
     } else if (rawObj.charAt(pointer).equals(Strings.VERTEX.charAt(0))) {
       pointer += 1
-      println("vertex")
       parseVertex()
     } else if (rawObj.charAt(pointer).equals(Strings.FACE.charAt(0))) {
       pointer += 1
-      println("face")
       parseTriangle()
     } else if (rawObj.charAt(pointer).equals(Strings.USE_MATERIAL.charAt(0)) && rawObj.charAt(pointer + 1).equals(Strings.USE_MATERIAL.charAt(1))) {
       pointer += 1
-      println("use material")
       parseUseMaterial()
     } else skipToNewLine()
   }
