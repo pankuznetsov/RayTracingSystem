@@ -37,7 +37,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
       val lampCollision = mesh.lamps(lamp).isCollide(mesh, triangleIndex, this)
       if (lampCollision != null && lampCollision._2 < time && lampCollision._2 < nearLamp && lampCollision._2 > Constants.EPSILON) {
         nearLamp = lampCollision._2
-          lampProxima = (lamp, lampCollision._1, lampCollision._2, lampCollision._3)
+        lampProxima = (lamp, lampCollision._1, lampCollision._2, lampCollision._3)
       }
     }
     ((index, hitPoint, time), volumes, lampProxima)
@@ -48,13 +48,13 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
     val lamp = tracingResults._3
-    val newTriangleIndex = if (hitTheSurface != null) hitTheSurface._1 else -1
+    val newTriangleIndex = if (hitTheSurface != null && hitTheSurface._3 > Constants.EPSILON) hitTheSurface._1 else -1
     if (hitTheSurface._2 != null && hitTheSurface._3 > Constants.EPSILON) {
       mesh.mesh(tracingResults._1._1).surface.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, shadersLeft)
     }
     if (lamp != null) {
-      mesh.lamps(tracingResults._3._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, shadersLeft)
-      return (true, mesh.lamps(tracingResults._3._1).output.outputs(0).content.asInstanceOf[Color])
+      mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, shadersLeft)
+      return (true, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color])
     }
     if (hitTheSurface._2 != null && hitTheSurface._3 > Constants.EPSILON) {
       return (true, mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color])

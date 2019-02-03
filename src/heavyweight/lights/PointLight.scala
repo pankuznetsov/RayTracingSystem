@@ -11,19 +11,24 @@ case class PointLight(override val location: Vector3D, override val size: Double
   and second Double for distance from lamp to the projection.
    */
   def projectToLamp(ray: Ray): (Vector3D, Double, Double) = {
-    val originToLamp = location - ray.origin
-    val originToLampMagnitude = originToLamp.magnitude
-    val projection = ray.origin + ray.direction * originToLampMagnitude
-    (projection, originToLampMagnitude, (projection - location).magnitude)
+    val v = ray.origin - location
+    val b = (ray.direction dotProduct v) * 2
+    val c = (v dotProduct v) - (size * size)
+    val d = (b * b) - (c * 4)
+    if (d > Constants.EPSILON) {
+      val x1 = (-b - Math.sqrt(d)) / 2
+      val x2 = (-b + Math.sqrt(d)) / 2
+      var t = if (x1 >= 0 && x2 >= 0) x1 else x2
+      val projection = ray.origin + ray.direction * t
+      return (projection, t, (location - projection).magnitude)
+    } else return null
   }
 
   override def isCollide(mesh: Mesh, triangleIndex: Int, ray: Ray): (Vector3D, Double, Double) = {
     val projection = projectToLamp(ray)
-    if (projection._2 < maxDistance && projection._3 < size) projection else null
+    if (projection != null && projection._2 <= maxDistance && projection._3 <= size) projection else null
   }
 
-  // override def throwRay(triangle: Triangle, position: Vector3D): Ray = Ray(position, (location - position).normalized)
-
   override def throwRay(triangle: Triangle, position: Vector3D): Ray = Ray(position,
-    (location - position).normalized + RayDistributor.getRandomVector3D() * (size / (location - position).magnitude))
+    (location - position).normalized + RayDistributor.newRandomVector3D() * Math.random() * (size / (location - position).magnitude))
 }

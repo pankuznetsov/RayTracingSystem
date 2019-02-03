@@ -11,6 +11,7 @@ case class Vector3D(x: Double, y: Double, z: Double) extends RootType() {
   def *(other: Vector3D) = Vector3D(x * other.x, y * other.y, z * other.z)
   def *(scalar: Double) = Vector3D(x * scalar, y * scalar, z * scalar)
   def /(other: Vector3D) = Vector3D(x / other.x, y / other.y, z / other.z)
+  def /(scalar: Double) = Vector3D(x / scalar, y / scalar, z / scalar)
 
   def dotProduct(other: Vector3D) = x * other.x + y * other.y + z * other.z
 

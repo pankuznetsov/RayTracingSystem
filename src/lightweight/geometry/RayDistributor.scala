@@ -18,7 +18,7 @@ object RayDistributor {
     var list: ListBuffer[Vector3D] = ListBuffer[Vector3D]()
     val random = new Random()
     while (list.length < n) {
-      val random = vector.linearInterpolation(getRandomVector3D(), scattering).normalized
+      val random = vector.linearInterpolation(newRandomVector3D(), scattering).normalized
       if (random.sameDirection(normal))
         list += random
     }

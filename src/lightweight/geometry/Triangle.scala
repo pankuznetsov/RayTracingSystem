@@ -34,6 +34,7 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
       time = ((supportingPlane.origin - ray.origin) dotProduct supportingPlane.normal) / temporary
     else
       return null
+    if (time <= Constants.EPSILON) return null
     val hitPoint = ray.origin + (ray.direction * time)
     val zeroEdge = b - a
     val vZero = hitPoint - a

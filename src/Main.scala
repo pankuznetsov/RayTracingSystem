@@ -49,6 +49,9 @@ object Main {
   def openObj(path: String): String = io.Source.fromFile(path).mkString
 
   def main(args: Array[String]): Unit = {
+    val directRay = Vector3D(1, 1, 0)
+    val normal = Vector3D(-1, -1, 0)
+    println(directRay.reflect(Plane(Vector3D(0, 0, 0), normal)).normalized)
 
     // BSDF rays generation
     RayDistributor.generate(128)
@@ -64,17 +67,18 @@ object Main {
     val getUV = Factories.newGetUV(map)
     val texture = Factories.newImageTexture(getUV.outputs(0), picture)
     val diffuse = Factories.newDiffuse(Container(null, Color(0.94f, 0.94f, 0.94f)), Container(null, Numeric(1)), Container(null, Numeric(4)), null)
-    val glossy = Factories.newGlossy(Container(null, Color(0.52f, 0.98f, 0.64f)), Container(null, Numeric(0)), Container(null, Numeric(1)), null)
+    val glossy = Factories.newGlossy(Container(null, Color(0.52f, 0.98f, 0.64f)), Container(null, Numeric(0.6)), Container(null, Numeric(4)), null)
     val emission = Factories.newEmission(Container(null, Color(0.9f, 0.2f, 0.1f)))
-    val surface = Factories.newSurfaceOutput(diffuse.outputs(0))
+    val surface = Factories.newSurfaceOutput(glossy.outputs(0))
 
-    val lampEmissionRed = Factories.newEmission(Container(null, Color(12f, 1.5f, 1.5f)))
+    val lampEmissionRed = Factories.newEmission(Container(null, Color(72.8f, 0.1f, 0.1f)))
     val lampSurfaceRed = Factories.newLampOutput(lampEmissionRed.outputs(0))
 
-    val lampEmissionGreen = Factories.newEmission(Container(null, Color(1f, 45f, 1f)))
+    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 50f, 0.1f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\OBJ Test.obj").getLines.mkString("\n")
+    // val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\OBJ Test.obj").getLines.mkString("\n")
+    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
     println(stringOBJ)
     val loader = Loader(stringOBJ, Array(surface), Array(), world)
     loader.loadObj()
@@ -87,8 +91,8 @@ object Main {
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1150, 0), Vector2D(0, 640))))
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(1).move(Vector3D(25, 25, 10))),  Array(PointLight(Vector3D(110, 80, 180), 32, Double.MaxValue, lampSurfaceRed, true, 0)
-      /* , PointLight(Vector3D(25, 25, 50), 12, Double.MaxValue, lampSurfaceGreen, true, 2) */ ))
+    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.32).move(Vector3D(60, 80, 10))),  Array(PointLight(Vector3D(10, 90, 80), 35, Double.MaxValue, lampSurfaceRed, true, 1),
+      PointLight(Vector3D(200, 60, 70), 42.5, Double.MaxValue, lampSurfaceGreen, true, 1)))
     val camera = Camera(null, null, 1, 380, 320)
     val image = camera.render(mesh, world, 2)
     displayImage(image, 380, 320)
