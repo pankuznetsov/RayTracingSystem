@@ -1,6 +1,7 @@
 package lightweight.geometry
 
-import lightweight.nodes.RootType
+import lightweight.Functions
+import lightweight.nodes.{Color, RootType}
 
 import scala.math.{pow, sqrt}
 
@@ -40,6 +41,10 @@ case class Vector3D(x: Double, y: Double, z: Double) extends RootType() {
     val cLength: Double = pow(c.x, 2) + pow(c.y, 2) + pow(c.z, 2)
     cLength > 2.0 + Constants.EPSILON
   }
+
+  def toColor: Color = Color(Functions.clamp[Float](x.asInstanceOf[Float], 0, 1),
+    Functions.clamp[Float](y.asInstanceOf[Float], 0, 1),
+    Functions.clamp[Float](z.asInstanceOf[Float], 0, 1))
 
   def linearInterpolation(other: Vector3D, mix: Double): Vector3D = (this * (1 - mix)) + (other * mix)
 

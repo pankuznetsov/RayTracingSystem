@@ -18,7 +18,7 @@ case class PointLight(override val location: Vector3D, override val size: Double
     if (d > Constants.EPSILON) {
       val x1 = (-b - Math.sqrt(d)) / 2
       val x2 = (-b + Math.sqrt(d)) / 2
-      var t = if (x1 >= 0 && x2 >= 0) x1 else x2
+      var t = if (x1 >= Constants.EPSILON && x2 >= Constants.EPSILON) x1 else x2
       val projection = ray.origin + ray.direction * t
       return (projection, t, (location - projection).magnitude)
     } else return null

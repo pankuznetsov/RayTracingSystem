@@ -1,3 +1,3 @@
 package lightweight.nodes
 
-case class Container(parentNode: Node, var content: RootType)
+case class Container(var parentNode: Node, var content: RootType)

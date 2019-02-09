@@ -1,7 +1,7 @@
 package lightweight.nodes
 
 import lightweight.{Lamp, World}
-import lightweight.geometry.{Mesh, Ray, Vector3D}
+import lightweight.geometry.{Mesh, Ray, Triangle, Vector3D}
 
 import scala.collection.immutable.HashMap
 import scala.collection.mutable.ListBuffer
@@ -33,13 +33,11 @@ abstract class Node(val inputs: Array[Container], val outputs: Array[Container])
           val collision = lamp.isCollide(mesh, triangleIndex, toLight)
           if (collision != null) {
             val renderSample = toLight.renderSample(mesh, world, triangleIndex, shadersLeft)
-            if  (renderSample._2 != null) {
-              sampleIntegral += renderSample._2 / collision._2 / lamp.samples
-            } else
-              println("failure 1")
+            if  (renderSample._2 != null) sampleIntegral += renderSample._2 / collision._2 / lamp.samples
           } else {
-            sampleIntegral += toLight.renderSample(mesh, world, triangleIndex, shadersLeft)._2 / lamp.samples
-            //println("failure 2")
+            val r = toLight.renderSample(mesh, world, triangleIndex, shadersLeft)._2
+            if (r != null)
+              sampleIntegral += r / lamp.samples
           }
         }
       }

@@ -2,10 +2,15 @@ package lightweight
 
 import java.awt.image.BufferedImage
 
-import lightweight.geometry.{Triangle, UVCoordinates, Vector2D, Vector3D}
+import lightweight.geometry._
 import lightweight.nodes.{Color, RootType}
 
 object Functions {
+
+  @inline def clamp[@specialized(Int, Double) T: Ordering](value: T, low: T, high: T): T = {
+    import Ordered._
+    if (value < low) low else if (value > high) high else value
+  }
 
   def interpolate(image: BufferedImage, hitPoint: Vector2D): Color = {
     val rgb = image.getRGB(Math.floor(hitPoint.x).asInstanceOf[Int], Math.floor(hitPoint.y).asInstanceOf[Int])
@@ -15,12 +20,22 @@ object Functions {
     lightweight.nodes.Color(red, green, blue) / 256
   }
 
+  def toColor(colorOrVector: RootType): Color = colorOrVector match {
+    case vector: Vector3D => vector.toColor
+    case color: Color => color
+    case null => null
+    case _ => null
+  }
+
   def toVector(colorOrVector: RootType): Vector3D = colorOrVector match {
     case color: Color => color.colorToVector
     case vector: Vector3D => vector
     case null => null
     case _ => null
   }
+
+  def getNormal(triangle: Triangle, ray: Ray): Vector3D = if (triangle.supportingPlane.normal.sameDirection(ray.direction))
+    triangle.supportingPlane.normal.invert else triangle.supportingPlane.normal
 
   def barycentricToCartesian(uwCoordinates: UVCoordinates, uvw: (Double, Double, Double)): Vector2D =
     Vector2D(uvw._1 * uwCoordinates.a.x + uvw._2 * uwCoordinates.b.x + uvw._3 * uwCoordinates.c.x,

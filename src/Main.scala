@@ -49,14 +49,10 @@ object Main {
   def openObj(path: String): String = io.Source.fromFile(path).mkString
 
   def main(args: Array[String]): Unit = {
-    val directRay = Vector3D(1, 1, 0)
-    val normal = Vector3D(-1, -1, 0)
-    println(directRay.reflect(Plane(Vector3D(0, 0, 0), normal)).normalized)
-
     // BSDF rays generation
     RayDistributor.generate(128)
 
-    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.1f, 0.6f)))
+    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.1f, 0.6f)), Container(null, Numeric(1f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null)
 
@@ -66,15 +62,19 @@ object Main {
 
     val getUV = Factories.newGetUV(map)
     val texture = Factories.newImageTexture(getUV.outputs(0), picture)
-    val diffuse = Factories.newDiffuse(Container(null, Color(0.94f, 0.94f, 0.94f)), Container(null, Numeric(1)), Container(null, Numeric(4)), null)
-    val glossy = Factories.newGlossy(Container(null, Color(0.52f, 0.98f, 0.64f)), Container(null, Numeric(0.6)), Container(null, Numeric(4)), null)
-    val emission = Factories.newEmission(Container(null, Color(0.9f, 0.2f, 0.1f)))
-    val surface = Factories.newSurfaceOutput(glossy.outputs(0))
+    val geomerty = Factories.newGeometry()
+    val light = Factories.newLampIllumination()
+    val diffuse = Factories.newDiffuse(Container(null, Color(0.94f, 0.94f, 0.94f)), Container(null, Numeric(0.9)), Container(null, Numeric(4)), null, light.outputs(0))
+    val transparent = Factories.newTransparent(Container(null, Color(0.94f, 0.92f, 0.90f)), Container(null, Numeric(0.5)), Container(null, Numeric(4)), null, null)
+    val translucent = Factories.newTranslucent(Container(null, Color(0.94f, 0.92f, 0.90f)), Container(null, Numeric(1)), Container(null, Numeric(2)), null, null)
+    val glossy = Factories.newGlossy(Container(null, Color(0.52f, 0.98f, 0.64f)), Container(null, Numeric(0.3)), Container(null, Numeric(2)), null, light.outputs(0))
+    val emission = Factories.newEmission(geomerty.outputs(2), Container(null, Numeric(2f)))
 
-    val lampEmissionRed = Factories.newEmission(Container(null, Color(72.8f, 0.1f, 0.1f)))
+    val surface = Factories.newSurfaceOutput(diffuse.outputs(0))
+
+    val lampEmissionRed = Factories.newEmission(Container(null, Color(0.8f, 0.1f, 0.1f)), Container(null, Numeric(16f)))
     val lampSurfaceRed = Factories.newLampOutput(lampEmissionRed.outputs(0))
-
-    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 50f, 0.1f)))
+    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 0.9f, 0.1f)), Container(null, Numeric(2f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
     // val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\OBJ Test.obj").getLines.mkString("\n")
@@ -86,15 +86,16 @@ object Main {
 
     val firstTriangle = Triangle(Vector3D(10, 10, 100),
       Vector3D(10 + 200, 10, 100),
-      Vector3D(10, 10 + 150, 90),
+      Vector3D(10, 10 + 150, 50),
       true, surface, null,
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1150, 0), Vector2D(0, 640))))
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.32).move(Vector3D(60, 80, 10))),  Array(PointLight(Vector3D(10, 90, 80), 35, Double.MaxValue, lampSurfaceRed, true, 1),
-      PointLight(Vector3D(200, 60, 70), 42.5, Double.MaxValue, lampSurfaceGreen, true, 1)))
+    /* val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.32).move(Vector3D(60, 80, 10))),  Array(PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),
+      PointLight(Vector3D(100, 110, 10), 8, Double.MaxValue, lampSurfaceGreen, true, 1))) */
+    val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
     val camera = Camera(null, null, 1, 380, 320)
-    val image = camera.render(mesh, world, 2)
+    val image = camera.render(mesh, world, 6)
     displayImage(image, 380, 320)
   }
 }
