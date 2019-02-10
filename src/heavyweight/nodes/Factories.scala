@@ -187,4 +187,20 @@ object Factories {
     binaryMathInput(1) = inputOne
     binaryMath
   }
+
+  val VECTOR_MATH_ADDITION: Int = 0
+  val VECTOR_MATH_SUBSTRACTION: Int = 1
+  val VECTOR_MATH_MULTIPLICATION: Int = 2
+  val VECTOR_MATH_DIVISION: Int = 3
+  val VECTOR_MATH_MAX: Int = 4
+  val VECTOR_MATH_MIN: Int = 5
+
+  def newVectorMath(inputZero: Container, inputOne: Container, optionIndex: Int): BinaryMath = {
+    val vectorMathInput = Array.ofDim[Container](2)
+    val vectorMathOut = Array.ofDim[Container](1)
+    val vectorMath = VectorMath(vectorMathInput, vectorMathOut, optionIndex)
+    vectorMathInput(0) = inputZero
+    vectorMathInput(1) = inputOne
+    vectorMath
+  }
 }
