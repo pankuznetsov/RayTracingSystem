@@ -50,7 +50,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     // BSDF rays generation
-    RayDistributor.generate(128)
+    // RayDistributor.generate(128)
 
     val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.1f, 0.6f)), Container(null, Numeric(1f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
