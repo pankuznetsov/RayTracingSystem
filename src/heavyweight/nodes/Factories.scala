@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage
 
 import lightweight.geometry.{UVMap, Vector3D}
 import lightweight.nodes._
-import org.graalvm.compiler.graph.Node.Input
 
 object Factories {
 
@@ -106,10 +105,10 @@ object Factories {
     return translucent
   }
 
-  def newGeometry(): Geomerty = {
+  def newGeometry(): Geometry = {
     val geometryInput = Array.ofDim[Container](0)
     val geometryOut = Array.ofDim[Container](5)
-    val geometry = Geomerty(geometryInput, geometryOut)
+    val geometry = Geometry(geometryInput, geometryOut)
     geometryOut(0) = Container(geometry, null)
     geometryOut(1) = Container(geometry, null)
     geometryOut(2) = Container(geometry, null)
@@ -163,5 +162,29 @@ object Factories {
     combineRGBInput(0) = inputOne
     combineRGBInput(0) = inputTwo
     combineRGB
+  }
+
+  def newInvertColor(inputZero: Container): InvertColor = {
+    val invertColorInput = Array.ofDim[Container](1)
+    val invertColorOut = Array.ofDim[Container](1)
+    val invertColor = InvertColor(invertColorInput, invertColorOut)
+    invertColorInput(0) = inputZero
+    invertColor
+  }
+
+  val MATH_ADDITION: Int = 0
+  val MATH_SUBSTRACTION: Int = 1
+  val MATH_MULTIPLICATION: Int = 2
+  val MATH_DIVISION: Int = 3
+  val MATH_MAX: Int = 4
+  val MATH_MIN: Int = 5
+
+  def newBinaryMath(inputZero: Container, inputOne: Container, optionIndex: Int): BinaryMath = {
+    val binaryMathInput = Array.ofDim[Container](2)
+    val binaryMathOut = Array.ofDim[Container](1)
+    val binaryMath = BinaryMath(binaryMathInput, binaryMathOut, optionIndex)
+    binaryMathInput(0) = inputZero
+    binaryMathInput(1) = inputOne
+    binaryMath
   }
 }

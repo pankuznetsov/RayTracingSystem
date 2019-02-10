@@ -4,7 +4,7 @@ import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Container, Node}
 
-case class Geomerty(override val inputs: Array[Container], override val outputs: Array[Container]) extends Node(inputs, outputs) {
+case class Geometry(override val inputs: Array[Container], override val outputs: Array[Container]) extends Node(inputs, outputs) {
 
   /* The Geometry node outputs are:
     0. Hit point location
