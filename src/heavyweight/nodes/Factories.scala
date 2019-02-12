@@ -1,6 +1,7 @@
 package heavyweight.nodes
 
 import java.awt.image.BufferedImage
+import java.awt.peer.LightweightPeer
 
 import lightweight.geometry.{UVMap, Vector3D}
 import lightweight.nodes._
@@ -195,12 +196,20 @@ object Factories {
   val VECTOR_MATH_MAX: Int = 4
   val VECTOR_MATH_MIN: Int = 5
 
-  def newVectorMath(inputZero: Container, inputOne: Container, optionIndex: Int): BinaryMath = {
+  def newVectorMath(inputZero: Container, inputOne: Container, optionIndex: Int): VectorMath = {
     val vectorMathInput = Array.ofDim[Container](2)
     val vectorMathOut = Array.ofDim[Container](1)
     val vectorMath = VectorMath(vectorMathInput, vectorMathOut, optionIndex)
     vectorMathInput(0) = inputZero
     vectorMathInput(1) = inputOne
     vectorMath
+  }
+
+  def newFresnel(inputZero: Container, worldIOR: Double): Fresnel = {
+    val fresnelInputs = Array.ofDim[Container](1)
+    val fresnelOutputs = Array.ofDim[Container](1)
+    val fresnel = Fresnel(fresnelInputs, fresnelOutputs, worldIOR)
+    fresnelInputs(0) = inputZero
+    fresnel
   }
 }
