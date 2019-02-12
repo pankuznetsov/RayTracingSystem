@@ -17,6 +17,7 @@ case class ColorRamp(override val inputs: Array[Container],
     iterpolateTipe
     0. lineal
     1. const
+    2. const2
    */
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
     if (interpolateTipe == 0) {
@@ -35,8 +36,7 @@ case class ColorRamp(override val inputs: Array[Container],
       val difference = nextSupportingColorPlase - niarSupportingColorPlase
       val newFac = inputs(0).asInstanceOf[lightweight.nodes.Numeric].value - niarSupportingColorPlase
       val colorsRatio = newFac / nextSupportingColorPlase
-      val resultColor = colors(foredIndex)linearInterpolation(colors(foredIndex), colorsRatio)
-      resultColor
+      colors(foredIndex)linearInterpolation(colors(foredIndex), colorsRatio)
     }
     if (interpolateTipe == 1) {
       var foredIndex = 0
@@ -47,7 +47,7 @@ case class ColorRamp(override val inputs: Array[Container],
           }
           foredIndex += 1
         }
-      val resultColor = colors(foredIndex)
+      val resultColor = colors(foredIndex + 1)
       resultColor
     }
   }
