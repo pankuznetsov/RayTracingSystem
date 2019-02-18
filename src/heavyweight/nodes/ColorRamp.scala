@@ -2,63 +2,60 @@ package heavyweight.nodes
 
 import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
-import lightweight.nodes.{Container, Node, Color}
-import util.control.Breaks._
+import lightweight.nodes.{Color, Container, Node, Numeric}
 
 case class ColorRamp(override val inputs: Array[Container],
                      override val outputs: Array[Container],
-                     val colors: Array[lightweight.nodes.Color],
-                     val plases: Array[Double],
-                     val interpolateTipe: Int) extends Node(inputs, outputs) {
-  /*
-    Inputs
-    0. Fac
-
-    iterpolateTipe
-    0. lineal
-    1. const1
-    2. const2
+                     colorPoints: Array[(Double, lightweight.nodes.Color)],
+                     interpolationType: Int) extends Node(inputs, outputs) {
+  /* Inputs
+    0. Facture
    */
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
-    if (interpolateTipe == 0) {
-      var foredIndex = 0
-      var niarSupportingColorPlase: Double = 0
-      breakable {
-        for (i: Int <- 0 until colors.length) {
-          if (inputs(0).asInstanceOf[lightweight.nodes.Numeric].value >= plases(foredIndex)) {
-            niarSupportingColorPlase = plases(foredIndex).asInstanceOf[lightweight.nodes.Numeric].value
-            break
-          }
-          foredIndex += 1
+    val facture: Double = inputs(0).content.asInstanceOf[Numeric].value
+    if (facture <= colorPoints(0)._1) {
+      outputs(0).content = colorPoints(0)._2
+      return
+    }
+    if (facture >= colorPoints.last._1) {
+      outputs(0).content = colorPoints.last._2
+      return
+    }
+    if (interpolationType == 0) {
+      for (forIndex: Int <- colorPoints.length) {
+        if (facture > colorPoints(forIndex)._1 && facture < colorPoints(forIndex + 1)._1) {
+          val difference = colorPoints(forIndex + 1)._1 - colorPoints(forIndex)._1
+          val newFacture = (facture - colorPoints(forIndex)._1) / difference
+          outputs(0).content = colorPoints(forIndex)._2 linearInterpolation(colorPoints(forIndex + 1)._2, newFacture)
+          return
         }
       }
-      val nextSupportingColorPlase = plases(foredIndex + 1)
-      val difference = nextSupportingColorPlase - niarSupportingColorPlase
-      val newFac = inputs(0).asInstanceOf[lightweight.nodes.Numeric].value - niarSupportingColorPlase
-      val colorsRatio = newFac / nextSupportingColorPlase
-      colors(foredIndex)linearInterpolation(colors(foredIndex), colorsRatio)
     }
-    if (interpolateTipe == 1) {
-      var foredIndex = 0
-      val niarSupportingColorPlase =
-        for (i: Int <- 0 until colors.length) {
-          if (inputs(0).asInstanceOf[lightweight.nodes.Numeric].value >= plases(foredIndex)) {
-            plases(foredIndex).asInstanceOf[lightweight.nodes.Numeric].value
-          }
-          foredIndex += 1
+    if (interpolationType == 1) {
+      for (forIndex: Int <- colorPoints.length) {
+        if (facture > colorPoints(forIndex)._1 && facture < colorPoints(forIndex + 1)._1) {
+          outputs(0).content = colorPoints(forIndex)._2
+          return
         }
-      colors(foredIndex)
+      }
     }
-    if (interpolateTipe == 2) {
-      var foredIndex = 0
-      val niarSupportingColorPlase =
-        for (i: Int <- 0 until colors.length) {
-          if (inputs(0).asInstanceOf[lightweight.nodes.Numeric].value >= plases(foredIndex)) {
-            plases(foredIndex).asInstanceOf[lightweight.nodes.Numeric].value
-          }
-          foredIndex += 1
+    if(interpolationType == 2) {
+      for (forIndex: Int <- colorPoints.length) {
+        if (facture > colorPoints(forIndex)._1 && facture < colorPoints(forIndex + 1)._1) {
+          outputs(0).content = colorPoints(forIndex + 1)._2
+          return
         }
-      colors(foredIndex + 1)
+      }
+    }
+    if (interpolationType == 3) {
+      for (forIndex: Int <- colorPoints.length) {
+        if (facture > colorPoints(forIndex)._1 && facture < colorPoints(forIndex + 1)._1) {
+          val difference = colorPoints(forIndex + 1)._1 - colorPoints(forIndex)._1
+          val newFacture = (facture - colorPoints(forIndex)._1) / difference
+          outputs(0).content = colorPoints(forIndex)._2 linearInterpolation(colorPoints(forIndex + 1)._2, 0.5)
+          return
+        }
+      }
     }
   }
 }

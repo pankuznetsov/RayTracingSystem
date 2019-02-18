@@ -1,7 +1,6 @@
 package heavyweight.nodes
 
 import java.awt.image.BufferedImage
-import java.awt.peer.LightweightPeer
 
 import lightweight.geometry.{UVMap, Vector3D}
 import lightweight.nodes._
@@ -211,5 +210,28 @@ object Factories {
     val fresnel = Fresnel(fresnelInputs, fresnelOutputs, worldIOR)
     fresnelInputs(0) = inputZero
     fresnel
+  }
+
+  def newColorRamp(inputZero: Container, interpolateTipe: Int, colorPoints: Array[(Double, lightweight.nodes.Color)]): ColorRamp = {
+    val colorRampInputs = Array.ofDim[Container](1)
+    val colorRampOutputs = Array.ofDim[Container](1)
+    val colorRamp = ColorRamp(colorRampInputs, colorRampOutputs, colorPoints, interpolateTipe)
+    colorRampInputs(0) = inputZero
+    colorRamp
+  }
+
+  def newRGBToBW(inputZero: Container): RGBToBlackWhite = {
+    val rgbToBlackWhiteInput = Array.ofDim[Container](1)
+    val rgbToBlackWhiteOutput = Array.ofDim[Container](2)
+    rgbToBlackWhiteInput(0) = inputZero
+    val rGBToBlackWhite = RGBToBlackWhite(rgbToBlackWhiteInput, rgbToBlackWhiteOutput)
+    rGBToBlackWhite
+  }
+
+  def newGetAngle(): GetAngle = {
+    val getAngleInputs = Array.ofDim[Container](0)
+    val getAngleOutputs = Array.ofDim[Container](2)
+    val getAngle = GetAngle(getAngleInputs, getAngleOutputs)
+    getAngle
   }
 }

@@ -11,6 +11,7 @@ case class VolumeOutput(override val inputs: Array[Container], override val outp
         if (field != null)
           field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
       doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
+      newFrame
     } else println("recursion end: lamp")
   }
 

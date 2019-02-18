@@ -11,6 +11,7 @@ case class SurfaceOutput(override val inputs: Array[Container], override val out
         if (field != null)
           field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
       doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft - 1)
+      newFrame
     } else outputs(0).content = Color(0, 0, 0)
   }
 

@@ -11,15 +11,13 @@ case class Fresnel(override val inputs: Array[Container], override val outputs: 
   */
 
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
-    val angle: Double = if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction)) {
-      val temporary = 1 - (ray.direction + mesh.mesh(triangleIndex).supportingPlane.normal).magnitude / 0.7071067811865476
-      outputs(0).content = lightweight.nodes.Numeric(Math.asin((inputs(0).asInstanceOf[lightweight.nodes.Numeric].value / worldIOR) * Constants.RADIANS_TURNOVER) + temporary)
-      temporary
-    } else {
-      val temporary = (ray.direction + mesh.mesh(triangleIndex).supportingPlane.normal).magnitude / 0.7071067811865476
-      outputs(0).content = lightweight.nodes.Numeric(Math.asin((worldIOR / inputs(0).asInstanceOf[lightweight.nodes.Numeric].value) * Constants.RADIANS_TURNOVER) + temporary)
-      temporary
+    val normal =  if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction)) {
+      mesh.mesh(triangleIndex).supportingPlane.normal.invert()} else {
+      mesh.mesh(triangleIndex).supportingPlane.normal
     }
-    outputs
+    val angle = Math.acos(ray.direction dotProduct mesh.mesh(triangleIndex).supportingPlane.normal)
+    val comFromAtmofiare = !mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction)
+    val criticalAngle = Math.asin(if (comFromAtmofiare){inputs(0).asInstanceOf[Double] / worldIOR} else {worldIOR / inputs(0).asInstanceOf[Double]})
+    outputs(0).content = lightweight.nodes.Numeric((angle + criticalAngle) * Constants.ONE_DIVIDE_ON_RADIANS_TURNOVER)
   }
 }

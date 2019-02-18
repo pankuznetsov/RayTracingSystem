@@ -54,11 +54,11 @@ object Main {
     val world = World(skyEmissionSurface, null)
 
     val map = UVMap("map_zero")
-    val pathToPicture = new File("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\test_normal_map.png")
-    val picture: BufferedImage = ImageIO.read(pathToPicture)
+    // val pathToPicture = new File("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\test_normal_map.png")
+    // val picture: BufferedImage = ImageIO.read(pathToPicture)
 
     val getUV = Factories.newGetUV(map)
-    val texture = Factories.newImageTexture(getUV.outputs(0), picture)
+    // val texture = Factories.newImageTexture(getUV.outputs(0), picture)
     val geomerty = Factories.newGeometry()
     val light = Factories.newLampIllumination()
     val diffuse = Factories.newDiffuse(Container(null, Color(0.94f, 0.94f, 0.94f)), Container(null, Numeric(0.9)), Container(null, Numeric(4)), null, light.outputs(0))
@@ -75,11 +75,11 @@ object Main {
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
     // val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\OBJ Test.obj").getLines.mkString("\n")
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
-    println(stringOBJ)
-    val loader = Loader(stringOBJ, Array(surface), Array(), world)
-    loader.loadObj()
-    println("triangles: " + loader.triangles.length)
+    // val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
+    // println(stringOBJ)
+    // val loader = Loader(stringOBJ, Array(surface), Array(), world)
+    // loader.loadObj()
+    // println("triangles: " + loader.triangles.length)
 
     val firstTriangle = Triangle(Vector3D(10, 10, 100),
       Vector3D(10 + 200, 10, 100),

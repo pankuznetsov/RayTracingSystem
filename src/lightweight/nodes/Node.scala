@@ -6,14 +6,23 @@ import lightweight.geometry.{Mesh, Ray, Triangle, Vector3D}
 import scala.collection.immutable.HashMap
 import scala.collection.mutable.ListBuffer
 
-abstract class Node(val inputs: Array[Container], val outputs: Array[Container]) {
+abstract class Node(val inputs: Array[Container], val outputs: Array[Container], var complite: Boolean = false) {
+
+  def newFrame: Unit = {
+    if (inputs != null) {
+      complite = false
+      for (field <- inputs; if field != null && field.parentNode != null)
+        field.parentNode.newFrame
+    }
+  }
 
   def run(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
-    if (shadersLeft >= 0) {
+    if (shadersLeft >= 0 && !complite) {
       for (field <- inputs)
         if (field != null && field.parentNode != null)
           field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
       doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
+      complite = true
     }
   }
 
