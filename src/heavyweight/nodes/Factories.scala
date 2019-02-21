@@ -195,15 +195,6 @@ object Factories {
     vectorMath
   }
 
-  def newImageTexture(coordinates: Container, image: BufferedImage): ImageTexture = {
-    val imageTextureInput = Array.ofDim[Container](1)
-    imageTextureInput(0) = coordinates
-    val imageTextureOut = Array.ofDim[Container](1)
-    val imageTexture = ImageTexture(imageTextureInput, imageTextureOut, image)
-    imageTextureOut(0) = Container(imageTexture, null)
-    return imageTexture
-  }
-
   def newColorRamp(inputZero: Container, interpolateTipe: Int, colorPoints: Array[(Double, lightweight.nodes.Color)]): ColorRamp = {
     val colorRampInputs = Array.ofDim[Container](1)
     val colorRampOutputs = Array.ofDim[Container](1)
@@ -211,6 +202,15 @@ object Factories {
     colorRampInputs(0) = inputZero
     colorRampOutputs(0) = Container(colorRamp, null)
     colorRamp
+  }
+
+  def newImageTexture(coordinates: Container, image: BufferedImage): ImageTexture = {
+    val imageTextureInput = Array.ofDim[Container](1)
+    imageTextureInput(0) = coordinates
+    val imageTextureOut = Array.ofDim[Container](1)
+    val imageTexture = ImageTexture(imageTextureInput, imageTextureOut, image)
+    imageTextureOut(0) = Container(imageTexture, null)
+    return imageTexture
   }
 
   def newRGBToBW(inputZero: Container): RGBToBlackWhite = {
