@@ -21,4 +21,6 @@ case class Color(red: Float, green: Float, blue: Float) extends RootType() {
   def linearInterpolation(other: Color, mix: Double): Color = (this * (1 - mix)) + (other * mix)
 
   def colorToVector: Vector3D = Vector3D(red, green, blue).normalized
+
+  def toNumeric: Numeric = Numeric((red + green + blue) / 3)
 }

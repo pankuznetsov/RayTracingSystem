@@ -137,15 +137,6 @@ object Factories {
     return getUV
   }
 
-  def newImageTexture(coordinates: Container, image: BufferedImage): ImageTexture = {
-    val imageTextureInput = Array.ofDim[Container](1)
-    imageTextureInput(0) = coordinates
-    val imageTextureOut = Array.ofDim[Container](1)
-    val imageTexture = ImageTexture(imageTextureInput, imageTextureOut, image)
-    imageTextureOut(0) = Container(imageTexture, null)
-    return imageTexture
-  }
-
   def newSpectrate(input: Container): Spectrate = {
     val spectrateInput = Array.ofDim[Container](1)
     val spectrateOut = Array.ofDim[Container](3)
@@ -204,12 +195,13 @@ object Factories {
     vectorMath
   }
 
-  def newFresnel(inputZero: Container, worldIOR: Double): Fresnel = {
-    val fresnelInputs = Array.ofDim[Container](1)
-    val fresnelOutputs = Array.ofDim[Container](1)
-    val fresnel = Fresnel(fresnelInputs, fresnelOutputs, worldIOR)
-    fresnelInputs(0) = inputZero
-    fresnel
+  def newImageTexture(coordinates: Container, image: BufferedImage): ImageTexture = {
+    val imageTextureInput = Array.ofDim[Container](1)
+    imageTextureInput(0) = coordinates
+    val imageTextureOut = Array.ofDim[Container](1)
+    val imageTexture = ImageTexture(imageTextureInput, imageTextureOut, image)
+    imageTextureOut(0) = Container(imageTexture, null)
+    return imageTexture
   }
 
   def newColorRamp(inputZero: Container, interpolateTipe: Int, colorPoints: Array[(Double, lightweight.nodes.Color)]): ColorRamp = {
@@ -217,6 +209,7 @@ object Factories {
     val colorRampOutputs = Array.ofDim[Container](1)
     val colorRamp = ColorRamp(colorRampInputs, colorRampOutputs, colorPoints, interpolateTipe)
     colorRampInputs(0) = inputZero
+    colorRampOutputs(0) = Container(colorRamp, null)
     colorRamp
   }
 
@@ -232,6 +225,8 @@ object Factories {
     val getAngleInputs = Array.ofDim[Container](0)
     val getAngleOutputs = Array.ofDim[Container](2)
     val getAngle = GetAngle(getAngleInputs, getAngleOutputs)
+    getAngleOutputs(0) = Container(getAngle, null)
+    getAngleOutputs(1) = Container(getAngle, null)
     getAngle
   }
 }

@@ -34,6 +34,13 @@ object Functions {
     case _ => null
   }
 
+  def toNumeric(colorOrNumeric: RootType): lightweight.nodes.Numeric = colorOrNumeric match {
+    case color: Color => color.toNumeric
+    case numeric: lightweight.nodes.Numeric => numeric
+    case null => null
+    case _ => null
+  }
+
   def getNormal(triangle: Triangle, ray: Ray): Vector3D = if (triangle.supportingPlane.normal.sameDirection(ray.direction))
     triangle.supportingPlane.normal.invert else triangle.supportingPlane.normal
 
