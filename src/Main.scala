@@ -55,32 +55,34 @@ object Main {
 
     val map = UVMap("map_zero")
     val pathToPicture = new File("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\ggg.jpg")
-    val picture: BufferedImage = ImageIO.read(pathToPicture.getCanonicalFile)
+    // val picture: BufferedImage = ImageIO.read(pathToPicture.getCanonicalFile)
 
     val getUV = Factories.newGetUV(map)
-    val texture = Factories.newImageTexture(getUV.outputs(0), picture)
+    // val texture = Factories.newImageTexture(getUV.outputs(0), picture)
     val geomerty = Factories.newGeometry()
     val light = Factories.newLampIllumination()
-    val diffuse = Factories.newDiffuse(Container(null, Color(0.94f, 0.94f, 0.94f)), Container(null, Numeric(0.9)), Container(null, Numeric(4)), null, light.outputs(0))
+    val diffuse = Factories.newDiffuse(Container(null, Color(1.24f, 0.03f, 0.0f)), Container(null, Numeric(0.9)), Container(null, Numeric(3)), null, light.outputs(0))
     val transparent = Factories.newTransparent(Container(null, Color(0.94f, 0.92f, 0.90f)), Container(null, Numeric(0.5)), Container(null, Numeric(4)), null, null)
     val translucent = Factories.newTranslucent(Container(null, Color(0.94f, 0.92f, 0.90f)), Container(null, Numeric(1)), Container(null, Numeric(2)), null, null)
-    val glossy = Factories.newGlossy(Container(null, Color(0.52f, 0.98f, 0.64f)), Container(null, Numeric(0.3)), Container(null, Numeric(2)), null, light.outputs(0))
-    val emission = Factories.newEmission(geomerty.outputs(2), Container(null, Numeric(2f)))
+    val glossy = Factories.newGlossy(Container(null, Color(1.0f, 1.0f, 1.0f)), Container(null, Numeric(0.0)), Container(null, Numeric(1)), null, light.outputs(0))
+    val emission = Factories.newEmission(Container(null, Color(1.0f, 0.2f, 0.0f)), Container(null, Numeric(2f)))
+    val rgbToGrayscale = Factories.newRGBToBW(glossy.outputs(0))
 
     val gradient = Array[(Double, Color)]((0, Color(0, 0, 1)),(0.25, Color(0, 1, 0)),(0.5, Color(1, 0, 0)))
-    val colorRamp = Factories.newColorRamp(texture.outputs(0), 0, gradient)
+    // val colorRamp = Factories.newColorRamp(texture.outputs(0), 0, gradient)
 
-    val surface = Factories.newSurfaceOutput(colorRamp.outputs(1))
+    val surfaceOne = Factories.newSurfaceOutput(rgbToGrayscale.outputs(0))
+    val surfaceTwo = Factories.newSurfaceOutput(diffuse.outputs(0))
 
     val lampEmissionRed = Factories.newEmission(Container(null, Color(0.8f, 0.1f, 0.1f)), Container(null, Numeric(16f)))
     val lampSurfaceRed = Factories.newLampOutput(lampEmissionRed.outputs(0))
     val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 0.9f, 0.1f)), Container(null, Numeric(2f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\test.obj").getLines.mkString("\n")
+    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\fc.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
     println(stringOBJ)
-    val loader = Loader(stringOBJ, Array(surface), Array(), world)
+    val loader = Loader(stringOBJ, Array(surfaceOne, surfaceTwo), Array(), world)
     loader.loadObj()
     println("triangles: " + loader.triangles.length)
 
@@ -91,11 +93,11 @@ object Main {
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1600, 0), Vector2D(0, 1050)))) */
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.32).move(Vector3D(60, 80, 10))),  Array(PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),
+    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.35).move(Vector3D(60, 50, 10))),  Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
       PointLight(Vector3D(100, 110, 10), 8, Double.MaxValue, lampSurfaceGreen, true, 1)))
-    //val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
+    // val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
     val camera = Camera(null, null, 1, 380, 320)
-    val image = camera.render(mesh, world, 2)
+    val image = camera.render(mesh, world, 3)
     displayImage(image, 380, 320)
   }
 }

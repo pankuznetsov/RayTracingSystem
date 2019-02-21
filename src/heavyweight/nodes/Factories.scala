@@ -217,8 +217,10 @@ object Factories {
     val rgbToBlackWhiteInput = Array.ofDim[Container](1)
     val rgbToBlackWhiteOutput = Array.ofDim[Container](2)
     rgbToBlackWhiteInput(0) = inputZero
-    val rGBToBlackWhite = RGBToBlackWhite(rgbToBlackWhiteInput, rgbToBlackWhiteOutput)
-    rGBToBlackWhite
+    val rgbToBlackWhite = RGBToBlackWhite(rgbToBlackWhiteInput, rgbToBlackWhiteOutput)
+    rgbToBlackWhiteOutput(0) = Container(rgbToBlackWhite, null)
+    rgbToBlackWhiteOutput(1) = Container(rgbToBlackWhite, null)
+    rgbToBlackWhite
   }
 
   def newGetAngle(): GetAngle = {
