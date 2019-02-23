@@ -7,7 +7,7 @@ import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node, Numeri
 case class Diffuse(override val inputs: Array[Container], override val outputs: Array[Container]) extends ScatteringSurface(inputs, outputs) {
 
   override def scatter(mesh: Mesh, world: World, triangleIndex: Int,
-                       ray: Ray, hitPoint: Vector3D, shadersLeft: Int,
+                       ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int,
                        color: Color, roughness: Double, rays: Int,
                        normalMap: Vector3D, flatNormal: Vector3D,
                        integral: LampIlluminationOutput): Array[Ray] = RayDistributor.getRandomRays(

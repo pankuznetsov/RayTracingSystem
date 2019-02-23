@@ -13,7 +13,7 @@ case class Geometry(override val inputs: Array[Container], override val outputs:
     3. Smooth normal
     4. Back facing
    */
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
     outputs(0).content = hitPoint
     outputs(1).content = ray.direction
     outputs(2).content = if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction))

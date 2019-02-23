@@ -4,9 +4,9 @@ import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Container, Node}
 
-case class VectorMath(override val inputs: Array[Container], override val outputs: Array[Container], val optionIndex: Int) extends Node(inputs, outputs) {
+case class VectorMath(override val inputs: Array[Container], override val outputs: Array[Container], optionIndex: Int) extends Node(inputs, outputs) {
 
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
     if (optionIndex < 9 || optionIndex > 0) null
     if (optionIndex == 0){
       inputs(0).content.asInstanceOf[Vector3D] + inputs(1).content.asInstanceOf[Vector3D]

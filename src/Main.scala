@@ -49,6 +49,8 @@ object Main {
   def openObj(path: String): String = io.Source.fromFile(path).mkString
 
   def main(args: Array[String]): Unit = {
+    val triangle: Triangle = Triangle(Vector3D(2, 2, 3), Vector3D(4, 2, 3), Vector3D(2, 4, 3), true, null, null, null)
+    println(triangle.barycentricToCartesian3D(0.33333, 0.33333, 0.33333))
     val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.1f, 0.6f)), Container(null, Numeric(1f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null)
@@ -61,28 +63,37 @@ object Main {
     // val texture = Factories.newImageTexture(getUV.outputs(0), picture)
     val geomerty = Factories.newGeometry()
     val light = Factories.newLampIllumination()
-    val diffuse = Factories.newDiffuse(Container(null, Color(1.24f, 0.03f, 0.0f)), Container(null, Numeric(0.9)), Container(null, Numeric(3)), null, light.outputs(0))
-    val transparent = Factories.newTransparent(Container(null, Color(0.94f, 0.92f, 0.90f)), Container(null, Numeric(0.5)), Container(null, Numeric(4)), null, null)
+    val diffuseZero = Factories.newDiffuse(Container(null, Color(1.54f, 0.03f, 0.12f)), Container(null, Numeric(0.9)), Container(null, Numeric(2)), null, light.outputs(0))
+    val diffuseOne = Factories.newDiffuse(Container(null, Color(0.1f, 1.24f, 0.0f)), Container(null, Numeric(0.9)), Container(null, Numeric(2)), null, light.outputs(0))
+    val diffuseTwo = Factories.newDiffuse(Container(null, Color(2.3f, 5.03f, 0.24f)), Container(null, Numeric(0.9)), Container(null, Numeric(2)), null, light.outputs(0))
+    val diffuseThree = Factories.newDiffuse(Container(null, Color(0.3f, 0.03f, 0.24f)), Container(null, Numeric(0.9)), Container(null, Numeric(2)), null, light.outputs(0))
+    val transparent = Factories.newTransparent(Container(null, Color(1.0f, 1.0f, 1.0f)), Container(null, Numeric(0.0)), Container(null, Numeric(1)), null, null)
     val translucent = Factories.newTranslucent(Container(null, Color(0.94f, 0.92f, 0.90f)), Container(null, Numeric(1)), Container(null, Numeric(2)), null, null)
     val glossy = Factories.newGlossy(Container(null, Color(1.0f, 1.0f, 1.0f)), Container(null, Numeric(0.0)), Container(null, Numeric(1)), null, light.outputs(0))
-    val emission = Factories.newEmission(Container(null, Color(1.0f, 0.2f, 0.0f)), Container(null, Numeric(2f)))
+    val emission = Factories.newEmission(Container(null, Color(1.0f, 0.0f, 0.0f)), Container(null, Numeric(2f)))
     val rgbToGrayscale = Factories.newRGBToBW(glossy.outputs(0))
+    val rayTeleport = Factories.newRayTeleport()
 
     val gradient = Array[(Double, Color)]((0, Color(0, 0, 1)),(0.25, Color(0, 1, 0)),(0.5, Color(1, 0, 0)))
     // val colorRamp = Factories.newColorRamp(texture.outputs(0), 0, gradient)
 
-    val surfaceOne = Factories.newSurfaceOutput(rgbToGrayscale.outputs(0))
-    val surfaceTwo = Factories.newSurfaceOutput(diffuse.outputs(0))
+    val surfaceZero = Factories.newSurfaceOutput(diffuseZero.outputs(0))
+    val surfaceOne = Factories.newSurfaceOutput(rayTeleport.outputs(0))
+    val surfaceTwo = Factories.newSurfaceOutput(emission.outputs(0))
+    val surfaceThree = Factories.newSurfaceOutput(diffuseOne.outputs(0))
 
     val lampEmissionRed = Factories.newEmission(Container(null, Color(0.8f, 0.1f, 0.1f)), Container(null, Numeric(16f)))
     val lampSurfaceRed = Factories.newLampOutput(lampEmissionRed.outputs(0))
-    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 0.9f, 0.1f)), Container(null, Numeric(2f)))
+    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 2.9f, 1.1f)), Container(null, Numeric(2f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\fc.obj").getLines.mkString("\n")
+    val volumeEmission = Factories.newVolumeEmission(Container(null, Color(0.9f, 0.1f, 0.05f)), Container(null, Numeric(0.001)), Container(null, Numeric(0.001)))
+    val testVolumeOutput = Factories.newVolumeOutput(volumeEmission.outputs(0))
+
+    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\fokus_j.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
     println(stringOBJ)
-    val loader = Loader(stringOBJ, Array(surfaceOne, surfaceTwo), Array(), world)
+    val loader = Loader(stringOBJ, Array(surfaceZero, surfaceOne, surfaceTwo, surfaceThree), Array(), world)
     loader.loadObj()
     println("triangles: " + loader.triangles.length)
 
@@ -93,11 +104,11 @@ object Main {
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1600, 0), Vector2D(0, 1050)))) */
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.35).move(Vector3D(60, 50, 10))),  Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
-      PointLight(Vector3D(100, 110, 10), 8, Double.MaxValue, lampSurfaceGreen, true, 1)))
+    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.5).move(Vector3D(30, 30, 130))),  Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
+      PointLight(Vector3D(100, 110, 10), 8, Double.MaxValue, lampSurfaceGreen, true, 1)), HashMap(0 -> 2, 1 -> 3))
     // val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
     val camera = Camera(null, null, 1, 380, 320)
-    val image = camera.render(mesh, world, 3)
+    val image = camera.render(mesh, world, 1)
     displayImage(image, 380, 320)
   }
 }

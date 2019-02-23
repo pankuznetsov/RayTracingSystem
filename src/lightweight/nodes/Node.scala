@@ -16,17 +16,17 @@ abstract class Node(val inputs: Array[Container], val outputs: Array[Container],
     }
   }
 
-  def run(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit = {
+  def run(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
     if (shadersLeft >= 0 && !complite) {
       for (field <- inputs)
         if (field != null && field.parentNode != null)
-          field.parentNode.run(mesh: Mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
-      doThings(mesh, world, triangleIndex, ray, hitPoint, shadersLeft)
+          field.parentNode.run(mesh, world, triangleIndex, ray, hitPoint, coordinates, shadersLeft)
+      doThings(mesh, world, triangleIndex, ray, hitPoint, coordinates, shadersLeft)
       complite = true
     }
   }
 
-  def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, shadersLeft: Int): Unit
+  def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit
 
   def throwToLights(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, normal: Vector3D, shadersLeft: Int): (Int, Color) = {
     var red: Float = 0f

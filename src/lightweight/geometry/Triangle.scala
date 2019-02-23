@@ -63,6 +63,11 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     }
   }
 
+  def barycentricToCartesian3D(uvw: (Double, Double, Double)): Vector3D =
+    Vector3D(uvw._1 * a.x + uvw._2 * b.x + uvw._3 * a.x,
+      uvw._1 * a.y + uvw._2 * b.y + uvw._3 * c.y,
+      uvw._1 * a.z + uvw._2 * b.z + uvw._3 * c.z)
+
   def getPerimeter: Double = (b - a).magnitude + (c - b).magnitude + (a - c).magnitude
 
   def getArea: Double = {

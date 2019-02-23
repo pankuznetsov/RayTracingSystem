@@ -231,4 +231,23 @@ object Factories {
     getAngleOutputs(1) = Container(getAngle, null)
     getAngle
   }
+
+  def newVolumeEmission(color: Container, intensity: Container, density: Container): VolumeEmission = {
+    val volumeEmissionInput = Array.ofDim[Container](3)
+    volumeEmissionInput(0) = color
+    volumeEmissionInput(1) = intensity
+    volumeEmissionInput(2) = density
+    val volumeEmissionOut = Array.ofDim[Container](1)
+    val volumeEmission = VolumeEmission(volumeEmissionInput, volumeEmissionOut)
+    volumeEmissionOut(0) = Container(volumeEmission, null)
+    return volumeEmission
+  }
+
+  def newRayTeleport(): RayTeleport = {
+    val rayTeleportInput = Array.ofDim[Container](0)
+    val rayTeleportOutput = Array.ofDim[Container](1)
+    val rayTeleport = RayTeleport(rayTeleportInput, rayTeleportOutput)
+    rayTeleportOutput(0) = Container(rayTeleport, null)
+    rayTeleport
+  }
 }
