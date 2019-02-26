@@ -6,7 +6,7 @@ import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node}
 
 case class RayTeleport(override val inputs: Array[Container], override val outputs: Array[Container]) extends Node(inputs, outputs) {
 
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     if (mesh.binder.contains(triangleIndex)) {
       val bind: Option[Int] = mesh.binder.get(triangleIndex)
       if (bind.nonEmpty) {

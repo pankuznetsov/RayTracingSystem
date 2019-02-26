@@ -2,7 +2,7 @@ package heavyweight.nodes
 
 import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
-import lightweight.nodes.{Container, Node}
+import lightweight.nodes.{Color, Container, Node}
 
 case class BinaryMath(override val inputs: Array[Container], override val outputs: Array[Container], val optionIndex: Int) extends Node(inputs, outputs) {
   /*
@@ -17,7 +17,7 @@ case class BinaryMath(override val inputs: Array[Container], override val output
     From container:
     0). FirstOperand
     1). SecondOperand */
-    override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
+    override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
       if (optionIndex > 5 || optionIndex < 0) null
       if (optionIndex == 0) {
         outputs(0).content = lightweight.nodes.Numeric(inputs(0).content.asInstanceOf[lightweight.nodes.Numeric].value + inputs(1).content.asInstanceOf[lightweight.nodes.Numeric].value)

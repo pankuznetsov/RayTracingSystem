@@ -24,9 +24,9 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
         }
         if (intersection != null && mesh.mesh(triangle).volume != null) {
           if (!volumes.contains(mesh.mesh(triangle).volume)) {
-            volumes += (mesh.mesh(triangle).volume -> (if (mesh.mesh(triangle).supportingPlane.normal.sameDirection(direction)) { -1 } else { 1 }))
+            volumes += (mesh.mesh(triangle).volume -> (if (mesh.mesh(triangle).supportingPlane.normal.sameDirection(direction)) { 1 } else { -1 }))
           } else {
-            volumes += (mesh.mesh(triangle).volume -> (if (mesh.mesh(triangle).supportingPlane.normal.sameDirection(direction)) { volumes(mesh.mesh(triangle).volume) - 1 } else { volumes(mesh.mesh(triangle).volume) + 1 }))
+            volumes += (mesh.mesh(triangle).volume -> (if (mesh.mesh(triangle).supportingPlane.normal.sameDirection(direction)) { volumes(mesh.mesh(triangle).volume) + 1 } else { volumes(mesh.mesh(triangle).volume) - 1 }))
           }
         }
       }
@@ -43,24 +43,24 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     ((index, hitPoint, time), volumes, lampProxima)
   }
 
-  def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): ColorWithDensity = {
+  def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, afterColor: Color, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): Color = {
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
-    var densityAndColorResult: ColorWithDensity = ColorWithDensity(0, 0, 0, 0)
-    // println("Volumes rendering")
-    val steps: Int = (hitTheSurface._3 / Constants.VOLUME_STEP_SIZE).asInstanceOf[Int]
-    for (point <- 0 until steps) {
-      var pointResult: ColorWithDensity = ColorWithDensity(0, 0, 0, 0)
-      val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * point) + RayDistributor.newRandomVector3D() * Constants.VOLUME_STEP_SIZE
-      for ((material, quantity) <- smokes) {
-        material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, shadersLeft)
-        pointResult = pointResult + material.outputs(0).content.asInstanceOf[ColorWithDensity]
+    // val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * point) + RayDistributor.newRandomVector3D() * Constants.VOLUME_STEP_SIZE
+    var result: Color = afterColor
+    val stepNumber: Int = Math.min(Constants.VOLUME_MAX_STEPS, (tracingResults._1._3 / Constants.VOLUME_STEP_SIZE).asInstanceOf[Int])
+    if (tracingResults._2 != null && tracingResults._2.nonEmpty)
+      for (i <- (0 until stepNumber).reverse) {
+        for ((material: VolumeOutput, quantity: Int) <- tracingResults._2) {
+          val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * i) + (direction * Math.random() * Constants.VOLUME_STEP_SIZE)
+          for (q <- 0 until quantity) {
+            material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, result, shadersLeft)
+            result = material.outputs(0).content.asInstanceOf[Color]
+          }
+        }
       }
-      val densityForDivision: Float = Math.max(1, densityAndColorResult.density)
-      densityAndColorResult = densityAndColorResult + pointResult / densityForDivision
-    }
-    // println("renderVolume: " + densityAndColorResult)
-    densityAndColorResult
+    // println(s"${afterColor} -> rv ${result}")
+    result
   }
 
   def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int): (Boolean, Color) = {
@@ -70,30 +70,17 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     val lamp = tracingResults._3
     val newTriangleIndex = if (hitTheSurface != null && hitTheSurface._3 > Constants.EPSILON) hitTheSurface._1 else -1
     if (hitTheSurface._2 != null && mesh.mesh(hitTheSurface._1).surface != null && hitTheSurface._3 > Constants.EPSILON) {
-      mesh.mesh(tracingResults._1._1).surface.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, shadersLeft)
+      mesh.mesh(tracingResults._1._1).surface.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft)
     }
     if (lamp != null) {
-      val volumeColorWithDensity = if (tracingResults._2 != null && tracingResults._2.nonEmpty) renderVolume(mesh, world, triangleIndex, shadersLeft, tracingResults) else null
-      mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, shadersLeft)
-      if (volumeColorWithDensity == null)
-        return (true, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color])
-      else {
-        val volumeColor = Color(volumeColorWithDensity.red, volumeColorWithDensity.green, volumeColorWithDensity.blue)
-        return (true, volumeColor * Math.min(1, volumeColorWithDensity.density) + mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color] / Math.max(1, volumeColorWithDensity.density))
-      }
+      mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft)
+      (false, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults))
     }
     if (hitTheSurface._2 != null && hitTheSurface._3 > Constants.EPSILON) {
-      val volumeColorWithDensity = if (tracingResults._2 != null && tracingResults._2.nonEmpty) renderVolume(mesh, world, triangleIndex, shadersLeft, tracingResults) else null
-      if (volumeColorWithDensity == null)
-        return (true, mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color])
-      else {
-        val volumeColor = Color(volumeColorWithDensity.red, volumeColorWithDensity.green, volumeColorWithDensity.blue)
-        return (true, volumeColor * Math.min(1, volumeColorWithDensity.density) + mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color] / Math.max(1, volumeColorWithDensity.density))
-      }
-      // return (true, mesh.mesh(hitTheSurface._1).surface.outputs(0).content.asInstanceOf[Color])
+      (true, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.mesh(tracingResults._1._1).surface.outputs(0).content.asInstanceOf[Color], tracingResults))
     } else {
-      world.skySurface.run(mesh, world, -1, this, null, null, shadersLeft)
-      return (false, world.skySurface.outputs(0).content.asInstanceOf[Color])
+      world.skySurface.run(mesh, world, -1, this, null, null, null, shadersLeft)
+      (false, world.skySurface.outputs(0).content.asInstanceOf[Color])
     }
   }
 

@@ -2,7 +2,7 @@ package heavyweight.nodes
 
 import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
-import lightweight.nodes.{Container, Node}
+import lightweight.nodes.{Color, Container, Node}
 
 case class CheckerTexture(override val inputs: Array[Container], override val outputs: Array[Container], worldIOR: Double) extends Node(inputs, outputs) {
 
@@ -12,7 +12,7 @@ case class CheckerTexture(override val inputs: Array[Container], override val ou
     2. First Color
     3. Second Color
    */
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     val supportVector: Vector3D = inputs(0).content.asInstanceOf[Vector3D]
     var blackOrWhite = true
     if ((supportVector.x * inputs(1).content.asInstanceOf[Double]) % 2 == 1) {

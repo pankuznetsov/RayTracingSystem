@@ -19,7 +19,7 @@ abstract class ScatteringSurface(override val inputs: Array[Container], override
                        normalMap: Vector3D, flatNormal: Vector3D,
                        integral: LampIlluminationOutput): Array[Ray]
 
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     val color = Functions.toColor(inputs(0).content)
     val roughness: Double = inputs(1).content.asInstanceOf[Numeric].value
     val rays: Int = inputs(2).content.asInstanceOf[Numeric].value.asInstanceOf[Int]

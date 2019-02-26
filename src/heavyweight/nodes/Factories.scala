@@ -232,15 +232,24 @@ object Factories {
     getAngle
   }
 
-  def newVolumeEmission(color: Container, intensity: Container, density: Container): VolumeEmission = {
-    val volumeEmissionInput = Array.ofDim[Container](3)
+  def newVolumeEmission(color: Container, intensity: Container): VolumeEmission = {
+    val volumeEmissionInput = Array.ofDim[Container](2)
     volumeEmissionInput(0) = color
     volumeEmissionInput(1) = intensity
-    volumeEmissionInput(2) = density
     val volumeEmissionOut = Array.ofDim[Container](1)
     val volumeEmission = VolumeEmission(volumeEmissionInput, volumeEmissionOut)
     volumeEmissionOut(0) = Container(volumeEmission, null)
     return volumeEmission
+  }
+
+  def newVolumeAbsorption(color: Container, density: Container): VolumeAbsorption = {
+    val volumeAbsorptionInput = Array.ofDim[Container](2)
+    volumeAbsorptionInput(0) = color
+    volumeAbsorptionInput(1) = density
+    val volumeAbsorptionOut = Array.ofDim[Container](1)
+    val volumeAbsorption = VolumeAbsorption(volumeAbsorptionInput, volumeAbsorptionOut)
+    volumeAbsorptionOut(0) = Container(volumeAbsorption, null)
+    return volumeAbsorption
   }
 
   def newRayTeleport(): RayTeleport = {
