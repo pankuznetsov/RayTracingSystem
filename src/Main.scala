@@ -65,7 +65,7 @@ object Main {
   def main(args: Array[String]): Unit = {
     val triangle: Triangle = Triangle(Vector3D(2, 2, 3), Vector3D(4, 2, 3), Vector3D(2, 4, 3), true, null, null, null)
     println(triangle.barycentricToCartesian3D(0.33333, 0.33333, 0.33333))
-    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.95f, 0.35f)), Container(null, Numeric(0f)))
+    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.95f, 0.35f)), Container(null, Numeric(0.5f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null)
 
@@ -103,8 +103,8 @@ object Main {
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
     val volumeEmission = Factories.newVolumeEmission(Container(null, Color(1.0f, 1.0f, 1.0f)), Container(null, Numeric(0.0006)))
-    val volumeAbsorption = Factories.newVolumeAbsorption(Container(null, Color(0.9f, 0.05f, 0.1f)), Container(null, Numeric(0.1)))
-    val testVolumeOutput = Factories.newVolumeOutput(volumeEmission.outputs(0))
+    val volumeAbsorption = Factories.newVolumeAbsorption(Container(null, Color(0.9f, 0.05f, 0.1f)), Container(null, Numeric(0.05)))
+    val testVolumeOutput = Factories.newVolumeOutput(volumeAbsorption.outputs(0))
 
     val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\test.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")
