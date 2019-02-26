@@ -46,7 +46,6 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
   def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, afterColor: Color, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): Color = {
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
-    // val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * point) + RayDistributor.newRandomVector3D() * Constants.VOLUME_STEP_SIZE
     var result: Color = afterColor
     val stepNumber: Int = Math.min(Constants.VOLUME_MAX_STEPS, (tracingResults._1._3 / Constants.VOLUME_STEP_SIZE).asInstanceOf[Int])
     if (tracingResults._2 != null && tracingResults._2.nonEmpty)
@@ -59,7 +58,6 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
           }
         }
       }
-    // println(s"${afterColor} -> rv ${result}")
     result
   }
 

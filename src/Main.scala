@@ -7,7 +7,7 @@ import heavyweight.lights.PointLight
 import heavyweight.nodes._
 import javax.imageio.ImageIO
 import javax.swing.{JFrame, JPanel}
-import lightweight.{Camera, Functions, Lamp, World}
+import lightweight._
 import lightweight.geometry._
 import lightweight.nodes._
 
@@ -33,7 +33,6 @@ object Main {
         g.fillRect(0, 0, getWidth, getHeight)
         for (y <- 0 until height)
           for (x <- 0 until width) {
-            // println(image(x)(y))
             val color = new java.awt.Color(if ((image(x)(y).red * 255).asInstanceOf[Int] > 255) 255 else (image(x)(y).red * 255).asInstanceOf[Int],
               if ((image(x)(y).green * 255).asInstanceOf[Int] > 255) 255 else (image(x)(y).green * 255).asInstanceOf[Int],
             if ((image(x)(y).blue * 255).asInstanceOf[Int] > 255) 255 else (image(x)(y).blue * 255).asInstanceOf[Int])
@@ -46,12 +45,27 @@ object Main {
     frame.show()
   }
 
+  def copyDirectionForRayTeleport(inTriangle: Triangle, outTriangle: Triangle, ray: Ray): Vector3D = {
+    val inTriangleNormal = if (inTriangle.supportingPlane.normal.sameDirection(ray.direction)){inTriangle.supportingPlane.normal} else {inTriangle.supportingPlane.normal.invert()}
+    val outTriangleNormal = if (outTriangle.supportingPlane.normal.sameDirection(ray.direction)){outTriangle.supportingPlane.normal} else {outTriangle.supportingPlane.normal.invert()}
+    val firstProgection: Double =  (inTriangle.a - inTriangle.b).normalized dotProduct(ray.direction)
+    val secondProgection: Double = (inTriangle.b - inTriangle.c).normalized dotProduct(ray.direction)
+    //val thirdProgection: Double =  (inTriangle.c - inTriangle.a).normalized dotProduct(ray.direction)
+    val progectionToNormal: Double = inTriangleNormal dotProduct(ray.direction)
+    val result =
+      (outTriangle.a - outTriangle.b).normalized * firstProgection +
+        (outTriangle.b - outTriangle.c).normalized * secondProgection +
+      //(outTriangle.c - outTriangle.a).normalized * thirdProgection +
+        outTriangleNormal * progectionToNormal
+    result.normalized
+  }
+
   def openObj(path: String): String = io.Source.fromFile(path).mkString
 
   def main(args: Array[String]): Unit = {
     val triangle: Triangle = Triangle(Vector3D(2, 2, 3), Vector3D(4, 2, 3), Vector3D(2, 4, 3), true, null, null, null)
     println(triangle.barycentricToCartesian3D(0.33333, 0.33333, 0.33333))
-    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.1f, 0.6f)), Container(null, Numeric(1f)))
+    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.95f, 0.35f)), Container(null, Numeric(0f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null)
 
@@ -88,11 +102,12 @@ object Main {
     val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 2.9f, 1.1f)), Container(null, Numeric(2f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
-    val volumeEmission = Factories.newVolumeEmission(Container(null, Color(0.8f, 0.75f, 0.05f)), Container(null, Numeric(0.0045)))
-    val volumeAbsorption = Factories.newVolumeAbsorption(Container(null, Color(0.05f, 1f, 1f)), Container(null, Numeric(0)))
-    val testVolumeOutput = Factories.newVolumeOutput(volumeAbsorption.outputs(0))
+    val volumeEmission = Factories.newVolumeEmission(Container(null, Color(1.0f, 1.0f, 1.0f)), Container(null, Numeric(0.0006)))
+    val volumeAbsorption = Factories.newVolumeAbsorption(Container(null, Color(0.9f, 0.05f, 0.1f)), Container(null, Numeric(0.1)))
+    val testVolumeOutput = Factories.newVolumeOutput(volumeEmission.outputs(0))
 
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")
+    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\test.obj").getLines.mkString("\n")
+    //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
     println(stringOBJ)
     val loader = Loader(stringOBJ, Array(surfaceZero, surfaceOne, surfaceTwo, surfaceThree), Array(testVolumeOutput), world)
@@ -106,7 +121,7 @@ object Main {
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1600, 0), Vector2D(0, 1050)))) */
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.7).move(Vector3D(30, -20, 130))),  Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
+    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.75).move(Vector3D(30, 10, 130))),  Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
       PointLight(Vector3D(100, 110, 10), 8, Double.MaxValue, lampSurfaceGreen, true, 1)), HashMap(0 -> 2, 1 -> 3))
     // val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
     val camera = Camera(null, null, 1, 380, 320)
