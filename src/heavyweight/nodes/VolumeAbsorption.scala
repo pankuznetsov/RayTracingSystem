@@ -13,7 +13,7 @@ case class VolumeAbsorption(override val inputs: Array[Container], override val 
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     val color = Functions.toColor(inputs(0).content)
     val density: Float = Functions.toNumeric(inputs(1).content).value.asInstanceOf[Float]
-    outputs(0).content = backColor * (color)
+    outputs(0).content = backColor * (color / (density + 1))
   }
 }
 
