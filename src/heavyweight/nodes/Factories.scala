@@ -259,4 +259,14 @@ object Factories {
     rayTeleportOutput(0) = Container(rayTeleport, null)
     rayTeleport
   }
+
+  def newChekcerTexture(inputZero: Container, inputOne: Container, inputTwo: Container): CheckerTexture = {
+    val inputs = Array.ofDim[Container](3)
+    val outputs = Array.ofDim[Container](2)
+    val checkerTexture = CheckerTexture(inputs, outputs)
+    inputs(0) = inputZero
+    inputs(1) = inputOne
+    inputs(2) = inputTwo
+    checkerTexture
+  }
 }

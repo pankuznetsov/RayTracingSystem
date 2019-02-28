@@ -102,9 +102,10 @@ object Main {
     val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 2.9f, 1.1f)), Container(null, Numeric(2f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
-    val volumeEmission = Factories.newVolumeEmission(Container(null, Color(1.0f, 1.0f, 1.0f)), Container(null, Numeric(0.0006)))
+    val volumeEmission = Factories.newVolumeEmission(Container(null, Color(1.0f, 1.0f, 0.9f)), Container(null, Numeric(0.003)))
+    //  val checkerTexture = Factories.newChekcerTexture()
     val volumeAbsorption = Factories.newVolumeAbsorption(Container(null, Color(0.9f, 0.05f, 0.1f)), Container(null, Numeric(0.05)))
-    val testVolumeOutput = Factories.newVolumeOutput(volumeAbsorption.outputs(0))
+    val testVolumeOutput = Factories.newVolumeOutput(volumeEmission.outputs(0))
 
     val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\test.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")

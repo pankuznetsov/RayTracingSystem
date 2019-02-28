@@ -4,7 +4,7 @@ import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, Node}
 
-case class CheckerTexture(override val inputs: Array[Container], override val outputs: Array[Container], worldIOR: Double) extends Node(inputs, outputs) {
+case class CheckerTexture(override val inputs: Array[Container], override val outputs: Array[Container]) extends Node(inputs, outputs) {
 
   /* Checker texture inputs are:
     0. Vector

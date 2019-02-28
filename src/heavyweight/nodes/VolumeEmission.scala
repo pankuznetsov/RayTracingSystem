@@ -14,6 +14,10 @@ case class VolumeEmission(override val inputs: Array[Container], override val ou
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     val color = Functions.toColor(inputs(0).content)
     val intensity: Float = Functions.toNumeric(inputs(1).content).value.asInstanceOf[Float]
-    outputs(0).content = backColor + color * intensity * lightweight.geometry.Constants.VOLUME_STEP_SIZE
+    if (color != Color(0, 0, 0) || intensity != 0) {
+      outputs(0).content = backColor + color * intensity * lightweight.geometry.Constants.VOLUME_STEP_SIZE
+    } else {
+      outputs(0).content = backColor
+    }
   }
 }
