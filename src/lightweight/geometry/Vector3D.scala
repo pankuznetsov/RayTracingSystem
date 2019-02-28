@@ -34,6 +34,10 @@ case class Vector3D(x: Double, y: Double, z: Double) extends RootType() {
     plane.normal * ((plane.normal dotProduct noramlizedV) * 2) - noramlizedV
   }
 
+  def sameQuadrant(reference: Vector3D): Boolean = {
+    ((x > 0) == (reference.x > 0)) && ((y > 0) == (reference.y > 0)) && ((z > 0) == (reference.z > 0))
+  }
+
   def invert(): Vector3D = this * -1
 
   def sameDirection(other: Vector3D): Boolean = {

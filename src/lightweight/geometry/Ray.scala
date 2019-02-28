@@ -72,7 +72,8 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     }
     if (lamp != null) {
       mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft)
-      (false, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults))
+      val result = (false, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults))
+      return result
     }
     if (hitTheSurface._2 != null && hitTheSurface._3 > Constants.EPSILON) {
       (true, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.mesh(tracingResults._1._1).surface.outputs(0).content.asInstanceOf[Color], tracingResults))

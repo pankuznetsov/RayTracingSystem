@@ -8,15 +8,15 @@ import scala.collection.immutable.HashMap
 
 case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UVMap, UVCoordinates]) {
 
-  val supportingPlane: Plane = Plane(a, getNormal())
+  val supportingPlane: Plane = Plane(a, getNormal)
 
-  def move(displacement: Vector3D) = new Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume, uwCoordinates)
+  def move(displacement: Vector3D) = Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume, uwCoordinates)
 
-  def scale(zoom: Double) = new Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
+  def scale(zoom: Double) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
-  def scale(zoom: Vector3D) = new Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
+  def scale(zoom: Vector3D) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
-  def getNormal(): Vector3D = ((b - a) crossProduct (c - a)).normalized
+  def getNormal = ((b - a) crossProduct (c - a)).normalized
 
   def intersectionTime(ray: Ray): Double = {
     val temporary = ray.direction dotProduct supportingPlane.normal.normalized
@@ -25,6 +25,12 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
       ((supportingPlane.origin - ray.origin) dotProduct supportingPlane.normal) / temporary
     else
       Double.MaxValue
+  }
+
+  def sameQuadrant(ray: Ray): Boolean = {
+    var same: Boolean = false
+    for (i <- 0 until 3) same = same || (getVertex(i) - ray.origin).sameQuadrant(ray.direction)
+    return same
   }
 
   def intersectionWithRay(ray: Ray): (Vector3D, Double) = {
