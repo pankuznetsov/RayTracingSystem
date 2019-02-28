@@ -8,6 +8,7 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
   def render(mesh: Mesh, world: World, samples: Int): Array[Array[Color]] = {
     val imageRatio = ratio(width, height)
     val image = Array.ofDim[Color](width, height)
+    val startTime = System.currentTimeMillis()
     for(y: Int <- 0 until height){
       for(x: Int <- 0 until width){
         // val rayFromCamera = Ray(location + Vector3D(imageRatio._1 / width * x, imageRatio._2 / height * y, 0) - Vector3D(imageRatio._1 / 2, imageRatio._2, 0), Vector3D(0,0,1))
@@ -22,6 +23,9 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
       }
       println(s"line rendered: ${y}")
     }
+    val endTime = System.currentTimeMillis()
+    val time: Double = (endTime - startTime).asInstanceOf[Double] / 1000.0
+    println("time: %.2f".format(time))
     image
   }
 
