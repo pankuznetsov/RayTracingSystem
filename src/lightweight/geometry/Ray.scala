@@ -55,6 +55,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
           for (q <- 0 until quantity) {
             material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, result, shadersLeft)
             result = material.outputs(0).content.asInstanceOf[Color]
+            if (quantity == 0) {print("a")}
           }
         }
       }

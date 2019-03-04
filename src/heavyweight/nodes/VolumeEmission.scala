@@ -9,7 +9,6 @@ case class VolumeEmission(override val inputs: Array[Container], override val ou
   /*
     1. Color
     2. Intensity
-    3. Density
   */
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     val color = Functions.toColor(inputs(0).content)

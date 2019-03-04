@@ -2,6 +2,7 @@ package heavyweight.nodes
 
 import java.awt.image.BufferedImage
 
+import jdk.internal.util.xml.impl.Input
 import lightweight.geometry.{UVMap, Vector3D}
 import lightweight.nodes._
 
@@ -107,13 +108,14 @@ object Factories {
 
   def newGeometry(): Geometry = {
     val geometryInput = Array.ofDim[Container](0)
-    val geometryOut = Array.ofDim[Container](5)
+    val geometryOut = Array.ofDim[Container](6)
     val geometry = Geometry(geometryInput, geometryOut)
     geometryOut(0) = Container(geometry, null)
     geometryOut(1) = Container(geometry, null)
     geometryOut(2) = Container(geometry, null)
     geometryOut(3) = Container(geometry, null)
     geometryOut(4) = Container(geometry, null)
+    geometryOut(5) = Container(geometry, null)
     return geometry
   }
 
@@ -260,13 +262,28 @@ object Factories {
     rayTeleport
   }
 
-  def newChekcerTexture(inputZero: Container, inputOne: Container, inputTwo: Container): CheckerTexture = {
-    val inputs = Array.ofDim[Container](3)
+  def newChekcerTexture(inputZero: Container, inputOne: Container, inputTwo: Container, inputThree: Container): CheckerTexture = {
+    val inputs = Array.ofDim[Container](4)
     val outputs = Array.ofDim[Container](2)
     val checkerTexture = CheckerTexture(inputs, outputs)
     inputs(0) = inputZero
     inputs(1) = inputOne
     inputs(2) = inputTwo
+    inputs(3) = inputThree
+    outputs(0) = Container(checkerTexture, null)
+    outputs(1) = Container(checkerTexture, null)
     checkerTexture
+  }
+
+  def newVolumeScatter(inputZero: Container, inputOne: Container, inputTwo: Container, inputThree: Container, rayQuantity: Int): VolumeScatter = {
+    val inputs = Array.ofDim[Container](4)
+    val outputs = Array.ofDim[Container](1)
+    val volumeScatter = VolumeScatter(inputs, outputs, rayQuantity)
+    inputs(0) = inputZero
+    inputs(1) = inputOne
+    inputs(2) = inputTwo
+    inputs(3) = inputThree
+    outputs(0) = Container(volumeScatter, null)
+    volumeScatter
   }
 }
