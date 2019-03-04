@@ -275,14 +275,15 @@ object Factories {
     checkerTexture
   }
 
-  def newVolumeScatter(inputZero: Container, inputOne: Container, inputTwo: Container, inputThree: Container, rayQuantity: Int): VolumeScatter = {
-    val inputs = Array.ofDim[Container](4)
+  def newVolumeScatter(inputZero: Container, inputOne: Container, inputTwo: Container, inputThree: Container, inputFour: Container, rayQuantity: Int): VolumeScatter = {
+    val inputs = Array.ofDim[Container](5)
     val outputs = Array.ofDim[Container](1)
     val volumeScatter = VolumeScatter(inputs, outputs, rayQuantity)
     inputs(0) = inputZero
     inputs(1) = inputOne
     inputs(2) = inputTwo
     inputs(3) = inputThree
+    inputs(4) = inputFour
     outputs(0) = Container(volumeScatter, null)
     volumeScatter
   }

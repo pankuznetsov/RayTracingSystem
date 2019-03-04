@@ -28,17 +28,19 @@ abstract class Node(val inputs: Array[Container], val outputs: Array[Container],
 
   def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit
 
-  def throwToLights(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, normal: Vector3D, shadersLeft: Int): (Int, Color) = {
+  def throwToLights(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, normal: Vector3D, shadersLeft: Int): (Int, Color) = {
     var red: Float = 0f
     var green: Float = 0f
     var blue: Float = 0f
     var integral: Color = Color(0, 0, 0)
     var lights: Int = 0
+    val spawn = if (hitPoint != null) hitPoint else coordinates
+    val triangle = if (triangleIndex >= 0) mesh.mesh(triangleIndex) else null
     for (lamp <- mesh.lamps) {
       var sampleIntegral: Color  = Color(0, 0, 0)
       for (i <- 0 until lamp.samples) {
-        val toLight: Ray = lamp.throwRay(mesh.mesh(triangleIndex), hitPoint)
-        if (toLight.direction.sameDirection(normal)) {
+        val toLight: Ray = lamp.throwRay(triangle, spawn)
+        if (coordinates != null || toLight.direction.sameDirection(normal)) {
           val collision = lamp.isCollide(mesh, triangleIndex, toLight)
           if (collision != null) {
             val renderSample = toLight.renderSample(mesh, world, triangleIndex, shadersLeft)

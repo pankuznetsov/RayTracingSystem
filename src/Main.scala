@@ -66,12 +66,12 @@ object Main {
   def main(args: Array[String]): Unit = {
     val triangle: Triangle = Triangle(Vector3D(2, 2, 3), Vector3D(4, 2, 3), Vector3D(2, 4, 3), true, null, null, null)
     println(triangle.barycentricToCartesian3D(0.33333, 0.33333, 0.33333))
-    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.95f, 0.35f)), Container(null, Numeric(0.5f)))
+    val skyEmission = Factories.newEmission(Container(null, Color(0.0f, 0.95f, 0.0f)), Container(null, Numeric(0.5f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null)
 
     val map = UVMap("map_zero")
-    val pathToPicture = new File("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\ggg.jpg")
+    val pathToPicture = new File("C:\\Users\\Kuznetsov S. A\\Documents\\Ray Tracing\\cube.obj")
     // val picture: BufferedImage = ImageIO.read(pathToPicture.getCanonicalFile)
 
     val getUV = Factories.newGetUV(map)
@@ -100,17 +100,17 @@ object Main {
 
     val lampEmissionRed = Factories.newEmission(Container(null, Color(0.8f, 0.1f, 0.1f)), Container(null, Numeric(16f)))
     val lampSurfaceRed = Factories.newLampOutput(lampEmissionRed.outputs(0))
-    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.1f, 2.9f, 1.1f)), Container(null, Numeric(2f)))
+    val lampEmissionGreen = Factories.newEmission(Container(null, Color(0.0f, 3.0f, 0.0f)), Container(null, Numeric(2f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
     // val volumeEmission = Factories.newVolumeEmission(Container(null, Color(1.0f, 1.0f, 0.9f)), Container(null, Numeric(0.003)))
     // val geometry = Factories.newGeometry()
     // val checkerTexture = Factories.newChekcerTexture(geometry.outputs(5), Container(null, Numeric(5)), Container(null, Color(0.1f, 0.2f, 0.1f)), Container(null, Color(1f, 0.9f, 1f)))
-    val volumeScatter = Factories.newVolumeScatter(Container(null, Color(0.6f, 0.6f, 0.6f)), Container(null, Numeric(0.1f)), Container(null, Numeric(0f)), Container(null, Vector3D(0, 0, 0)), 3)
+    val volumeScatter = Factories.newVolumeScatter(Container(null, Color(0.6f, 0.6f, 0.6f)), Container(null, Numeric(0.1f)), Container(null, Numeric(0f)), Container(null, Vector3D(0, 0, 0)), light.outputs(0), 1)
     // val volumeAbsorption = Factories.newVolumeAbsorption(checkerTexture.outputs(1), Container(null, Numeric(0.05)))
     val testVolumeOutput = Factories.newVolumeOutput(volumeScatter.outputs(0))
 
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\test.obj").getLines.mkString("\n")
+    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")
     //val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
     println(stringOBJ)
@@ -126,11 +126,11 @@ object Main {
 
     // Mesh
     val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.75).move(Vector3D(30, 10, 130))), Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
-      PointLight(Vector3D(100, 110, 10), 8, Double.MaxValue, lampSurfaceGreen, true, 1)), HashMap(0 -> 2, 1 -> 3))
+      PointLight(Vector3D(90, 130, 300), 8, Double.MaxValue, lampSurfaceGreen, true, 1)), HashMap(0 -> 2, 1 -> 3))
     // val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
     val camera = Camera(null, null, 1, 380, 320)
     println("started")
-    val image = camera.render(mesh, world, 1, 9)
+    val image = camera.render(mesh, world, 1, 4)
     displayImage(image, 380, 320)
   }
 }

@@ -1,8 +1,8 @@
 package heavyweight.nodes
 
 import lightweight.World
-import lightweight.geometry.{Mesh, Ray, Vector3D, RayDistributor}
-import lightweight.nodes.{Color, Container, Node}
+import lightweight.geometry.{Mesh, Ray, RayDistributor, Vector3D}
+import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node}
 
 case class VolumeScatter(override val inputs: Array[Container], override val outputs: Array[Container], rayQuantity: Int) extends Node(inputs, outputs) {
 
@@ -16,6 +16,7 @@ case class VolumeScatter(override val inputs: Array[Container], override val out
     val volumeDensity: Double = inputs(1).content.asInstanceOf[lightweight.nodes.Numeric].value
     val volumeAnisotropic: Double = inputs(2).content.asInstanceOf[lightweight.nodes.Numeric].value
     val volumeNormal: Vector3D = inputs(3).content.asInstanceOf[Vector3D]
+    val integral: LampIlluminationOutput = if (inputs(4) != null) inputs(4).content.asInstanceOf[LampIlluminationOutput] else LampIlluminationOutput(Color(0, 0, 0), 0)
     var color = Color(0, 0, 0)
     for (i: Int <- 0 until rayQuantity) {
       val outRay: Ray = Ray(coordinates, lightweight.geometry.RayDistributor.newRandomVector3D() + ray.direction / (1 - volumeAnisotropic) + volumeNormal * volumeAnisotropic)
@@ -24,7 +25,8 @@ case class VolumeScatter(override val inputs: Array[Container], override val out
         color += renderSampleResult
     }
     color = color / rayQuantity
-    val result = color * volumeColor + backColor / Math.max(1, volumeDensity)
+    val newDensity = Math.max(1, volumeDensity)
+    val result = (backColor).linearInterpolation(color * volumeColor + integral.color, newDensity)  // + backColor / Math.max(1, volumeDensity)
     outputs(0).content = result.asInstanceOf[Color]
   }
 }
