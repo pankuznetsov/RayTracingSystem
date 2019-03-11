@@ -80,6 +80,20 @@ object Factories {
     return glossy
   }
 
+  def newRefraction(color: Container, roughness: Container, numberOfRays: Container, normal: Container, lampIlluminationOutput: Container, materialIOR: Container): Refraction = {
+    val refractionInput = Array.ofDim[Container](6)
+    refractionInput(0) = color
+    refractionInput(1) = roughness
+    refractionInput(2) = numberOfRays
+    refractionInput(3) = normal
+    refractionInput(4) = lampIlluminationOutput
+    refractionInput(5) = materialIOR
+    val refractionOut = Array.ofDim[Container](1)
+    val refraction = Refraction(refractionInput, refractionOut)
+    refractionOut(0) = Container(refraction, Color(0, 0, 0))
+    refraction
+  }
+
   def newTransparent(color: Container, roughness: Container, numberOfRays: Container, normal: Container, lampIlluminationOutput: Container): Transparent = {
     val transparentInput = Array.ofDim[Container](5)
     transparentInput(0) = color
@@ -144,24 +158,27 @@ object Factories {
     val spectrateOut = Array.ofDim[Container](3)
     val spectrate = Spectrate(spectrateInput, spectrateOut)
     spectrateInput(0) = input
+    spectrateOut(0) = Container(spectrate, null)
     spectrate
   }
 
-  def newCombineRGB(inputZero: Container, inputOne: Container, inputTwo: Container): CombineRGB = {
+  def newCombineRGB(red: Container, green: Container, blue: Container): CombineRGB = {
     val combineRGBInput = Array.ofDim[Container](3)
     val combineRGBOut = Array.ofDim[Container](1)
     val combineRGB = CombineRGB(combineRGBInput, combineRGBOut)
-    combineRGBInput(0) = inputZero
-    combineRGBInput(0) = inputOne
-    combineRGBInput(0) = inputTwo
+    combineRGBInput(0) = red
+    combineRGBInput(1) = green
+    combineRGBInput(2) = blue
+    combineRGBOut(0) = Container(combineRGB, null)
     combineRGB
   }
 
-  def newInvertColor(inputZero: Container): InvertColor = {
+  def newInvertColor(color: Container): InvertColor = {
     val invertColorInput = Array.ofDim[Container](1)
     val invertColorOut = Array.ofDim[Container](1)
     val invertColor = InvertColor(invertColorInput, invertColorOut)
-    invertColorInput(0) = inputZero
+    invertColorInput(0) = color
+    invertColorOut(0) = Container(invertColor, null)
     invertColor
   }
 
@@ -172,12 +189,13 @@ object Factories {
   val MATH_MAX: Int = 4
   val MATH_MIN: Int = 5
 
-  def newBinaryMath(inputZero: Container, inputOne: Container, optionIndex: Int): BinaryMath = {
+  def newBinaryMath(firstComponent: Container, secondComponent: Container, optionIndex: Int): BinaryMath = {
     val binaryMathInput = Array.ofDim[Container](2)
     val binaryMathOut = Array.ofDim[Container](1)
     val binaryMath = BinaryMath(binaryMathInput, binaryMathOut, optionIndex)
-    binaryMathInput(0) = inputZero
-    binaryMathInput(1) = inputOne
+    binaryMathInput(0) = firstComponent
+    binaryMathInput(1) = secondComponent
+    binaryMathOut(0) = Container(binaryMath, null)
     binaryMath
   }
 
@@ -188,20 +206,21 @@ object Factories {
   val VECTOR_MATH_MAX: Int = 4
   val VECTOR_MATH_MIN: Int = 5
 
-  def newVectorMath(inputZero: Container, inputOne: Container, optionIndex: Int): VectorMath = {
+  def newVectorMath(firstComponent: Container, secondComponent: Container, optionIndex: Int): VectorMath = {
     val vectorMathInput = Array.ofDim[Container](2)
     val vectorMathOut = Array.ofDim[Container](1)
     val vectorMath = VectorMath(vectorMathInput, vectorMathOut, optionIndex)
-    vectorMathInput(0) = inputZero
-    vectorMathInput(1) = inputOne
+    vectorMathInput(0) = firstComponent
+    vectorMathInput(1) = secondComponent
+    vectorMathOut(0) = Container(vectorMath, null)
     vectorMath
   }
 
-  def newColorRamp(inputZero: Container, interpolateTipe: Int, colorPoints: Array[(Double, lightweight.nodes.Color)]): ColorRamp = {
+  def newColorRamp(factore: Container, interpolateTipe: Int, colorPoints: Array[(Double, lightweight.nodes.Color)]): ColorRamp = {
     val colorRampInputs = Array.ofDim[Container](1)
     val colorRampOutputs = Array.ofDim[Container](1)
     val colorRamp = ColorRamp(colorRampInputs, colorRampOutputs, colorPoints, interpolateTipe)
-    colorRampInputs(0) = inputZero
+    colorRampInputs(0) = factore
     colorRampOutputs(0) = Container(colorRamp, null)
     colorRamp
   }
@@ -215,10 +234,10 @@ object Factories {
     return imageTexture
   }
 
-  def newRGBToBW(inputZero: Container): RGBToBlackWhite = {
+  def newRGBToBW(color: Container): RGBToBlackWhite = {
     val rgbToBlackWhiteInput = Array.ofDim[Container](1)
     val rgbToBlackWhiteOutput = Array.ofDim[Container](2)
-    rgbToBlackWhiteInput(0) = inputZero
+    rgbToBlackWhiteInput(0) = color
     val rgbToBlackWhite = RGBToBlackWhite(rgbToBlackWhiteInput, rgbToBlackWhiteOutput)
     rgbToBlackWhiteOutput(0) = Container(rgbToBlackWhite, null)
     rgbToBlackWhiteOutput(1) = Container(rgbToBlackWhite, null)
@@ -262,29 +281,40 @@ object Factories {
     rayTeleport
   }
 
-  def newChekcerTexture(inputZero: Container, inputOne: Container, inputTwo: Container, inputThree: Container): CheckerTexture = {
+  def newChekcerTexture(vector: Container, inputOne: Container, firstColor: Container, secondColor: Container): CheckerTexture = {
     val inputs = Array.ofDim[Container](4)
     val outputs = Array.ofDim[Container](2)
     val checkerTexture = CheckerTexture(inputs, outputs)
-    inputs(0) = inputZero
+    inputs(0) = vector
     inputs(1) = inputOne
-    inputs(2) = inputTwo
-    inputs(3) = inputThree
+    inputs(2) = firstColor
+    inputs(3) = secondColor
     outputs(0) = Container(checkerTexture, null)
     outputs(1) = Container(checkerTexture, null)
     checkerTexture
   }
 
-  def newVolumeScatter(inputZero: Container, inputOne: Container, inputTwo: Container, inputThree: Container, inputFour: Container, rayQuantity: Int): VolumeScatter = {
+  def newVolumeScatter(color: Container, density: Container, levelOfAnisotropic: Container, normal: Container, lampIllumination: Container, rayQuantity: Int): VolumeScatter = {
     val inputs = Array.ofDim[Container](5)
     val outputs = Array.ofDim[Container](1)
     val volumeScatter = VolumeScatter(inputs, outputs, rayQuantity)
-    inputs(0) = inputZero
-    inputs(1) = inputOne
-    inputs(2) = inputTwo
-    inputs(3) = inputThree
-    inputs(4) = inputFour
+    inputs(0) = color
+    inputs(1) = density
+    inputs(2) = levelOfAnisotropic
+    inputs(3) = normal
+    inputs(4) = lampIllumination
     outputs(0) = Container(volumeScatter, null)
     volumeScatter
+  }
+
+  def newMix(factor: Container, firstComponent: Container, secondComponent: Container): Mix = {
+    val inputs = Array.ofDim[Container](3)
+    val outputs = Array.ofDim[Container](1)
+    inputs(0) = factor
+    inputs(1) = firstComponent
+    inputs(2) = secondComponent
+    val mix = Mix(inputs, outputs)
+    outputs(0) = Container(mix, null)
+    mix
   }
 }

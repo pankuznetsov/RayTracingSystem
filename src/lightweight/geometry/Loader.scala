@@ -3,9 +3,10 @@ package lightweight.geometry
 import lightweight.World
 import lightweight.nodes.{SurfaceOutput, VolumeOutput}
 
+import scala.collection.immutable.HashMap
 import scala.collection.mutable.ListBuffer
 
-private object Strings {
+object Strings {
 
   val COMMENT: String = "#"
   val VERTEX: String = "v"
@@ -15,6 +16,8 @@ private object Strings {
   val USE_MATERIAL = "usemtl"
 
   val SLASH: String = "/"
+
+  val defaultUWMap = UVMap("default_map")
 }
 
 case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[VolumeOutput], world: World) {
@@ -23,6 +26,7 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
   var pointer: Int = 0
 
   var vetices = ListBuffer[Vector3D]()
+  var uwMap = ListBuffer[Vector2D]()
   var normals = ListBuffer[Vector3D]()
   var triangles = ListBuffer[Triangle]()
 
@@ -56,6 +60,25 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
       pointer += 1
     }
     if (number.length > 0) number.toString.toDouble else 0
+  }
+
+  private def parseUW(): Vector2D = {
+    var i = pointer
+    while (rawObj.charAt(i) != '\n') {
+      print(rawObj.charAt(i))
+      i += 1
+    }
+    println()
+    skipTrash()
+    val u: Double = parseFloat()
+    skipTrash()
+    val v: Double = parseFloat()
+    skipTrash()
+    val uw = Vector2D(u, v)
+    uwMap += uw
+    println(s"parseUW: $uw")
+    skipToNewLine()
+    uw
   }
 
   private def parseVertex(): Vector3D = {
@@ -118,9 +141,11 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
     skipTrash()
     val third = parseTriangleVertex()
     skipToNewLine()
+    val uvw = UVCoordinates(uwMap(first._2 - 1), uwMap(second._2 - 1), uwMap(third._2 - 1))
+    // println(s"loader, uvw: $uvw")
     val triangle = Triangle(vetices(first._1 - 1) * 50 + Vector3D(70, 70, 190), vetices(second._1 - 1) * 50 + Vector3D(70, 70, 190), vetices(third._1 - 1) * 50 + Vector3D(70, 70, 190), true,
       if (surfaces.length > 0 && surfaceMaterial >= 0) surfaces(surfaceMaterial) else null,
-      if (volumes.length > 0 && volumeMaterial >= 0) volumes(volumeMaterial) else null, null)
+      if (volumes.length > 0 && volumeMaterial >= 0) volumes(volumeMaterial) else null, HashMap(Strings.defaultUWMap -> uvw))
     triangles += triangle
     println(s"$triangle")
     return triangle
@@ -130,9 +155,9 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
     if (rawObj.charAt(pointer).equals(Strings.COMMENT.charAt(0))) {
       pointer += 1
       skipToNewLine()
-    } else if (rawObj.charAt(pointer).equals(Strings.VERTEX.charAt(0)) && rawObj.charAt(pointer + 1).equals(Strings.VERTEX_NORMALS.charAt(1))) {
-      pointer += 1
-      parseVertex()
+    } else if (rawObj.charAt(pointer).equals(Strings.TEXTURE_COORDINATES.charAt(0)) && rawObj.charAt(pointer + 1).equals(Strings.TEXTURE_COORDINATES.charAt(1))) {
+      pointer += 2
+      parseUW()
     } else if (rawObj.charAt(pointer).equals(Strings.VERTEX.charAt(0))) {
       pointer += 1
       parseVertex()

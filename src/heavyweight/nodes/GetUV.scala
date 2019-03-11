@@ -12,8 +12,9 @@ case class GetUV(override val inputs: Array[Container], override val outputs: Ar
     if (triangleUVCoordinatesOnTheMap.nonEmpty) {
       val uvCoordinates: UVCoordinates = triangleUVCoordinatesOnTheMap.get
       val barycentric = triangle.getBarycentric(hitPoint)
-      val cartesian = Functions.barycentricToCartesian(uvCoordinates, barycentric)
+      val cartesian: Vector2D = Functions.barycentricToCartesian(uvCoordinates, barycentric)
       outputs(0).content = cartesian
+      // println(s"getUV: { uw: ${uvCoordinates}, \tbarycentric: ${barycentric} }")
     } else {
       throw new NullPointerException
     }
