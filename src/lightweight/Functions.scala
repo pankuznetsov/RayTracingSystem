@@ -13,7 +13,11 @@ object Functions {
   }
 
   def interpolate(image: BufferedImage, hitPoint: Vector2D): Color = {
-    val rgb = image.getRGB(Math.floor(hitPoint.x).asInstanceOf[Int], Math.floor(hitPoint.y).asInstanceOf[Int])
+    val x = Math.abs(Math.floor(hitPoint.x).asInstanceOf[Int] % image.getWidth)
+    val y = Math.abs(Math.floor(hitPoint.y).asInstanceOf[Int] % image.getHeight)
+    /* if (x < 0 || y < 0 || x >= image.getWidth || y >= image.getHeight)
+      return lightweight.nodes.Color(1, 1, 1) */
+    val rgb = image.getRGB(x, y)
     val red = (rgb & 0x00ff0000) >> 16
     val green = (rgb & 0x0000ff00) >> 8
     val blue = (rgb & 0x000000ff) >> 0
