@@ -8,14 +8,14 @@ import scala.collection.mutable.ListBuffer
 
 case class Ray(origin: Vector3D, direction: Vector3D) {
 
-  def traceRay(mesh: Mesh, world: World, triangleIndex: Int): ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double)) = {
+  @inline def traceRay(mesh: Mesh, world: World, triangleIndex: Int): ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double)) = {
     var volumes: HashMap[VolumeOutput, Int] = HashMap.empty[VolumeOutput, Int]
     var lamps: HashMap[Int, (Vector3D, Double, Double)] = HashMap.empty[Int, (Vector3D, Double , Double)]
     var index: Int = 0
     var hitPoint: Vector3D = null
     var time: Double = Double.PositiveInfinity
-    for (triangle <- mesh.mesh.indices) {
-      if (triangle != triangleIndex) {
+    for (triangle <- 0 until mesh.mesh.length) {
+      if (triangle != triangleIndex && !mesh.mesh(triangle).backQuadrant(this)) {
         val intersection = mesh.mesh(triangle).intersectionWithRay(this)
         if (intersection != null && intersection._2 < time) {
           index = triangle
@@ -33,7 +33,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     }
     var nearLamp = Double.PositiveInfinity
     var lampProxima: (Int, Vector3D, Double, Double) = null
-    for (lamp <- mesh.lamps.indices) {
+    for (lamp <- 0 until mesh.lamps.length) {
       val lampCollision = mesh.lamps(lamp).isCollide(mesh, triangleIndex, this)
       if (lampCollision != null && lampCollision._2 < time && lampCollision._2 < nearLamp && lampCollision._2 > Constants.EPSILON) {
         nearLamp = lampCollision._2
@@ -43,7 +43,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     ((index, hitPoint, time), volumes, lampProxima)
   }
 
-  def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, afterColor: Color, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): Color = {
+  @inline def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, afterColor: Color, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): Color = {
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
     var result: Color = afterColor
@@ -55,7 +55,6 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
           for (q <- 0 until quantity) {
             material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, result, shadersLeft)
             result = material.outputs(0).content.asInstanceOf[Color]
-            if (quantity == 0) {print("a")}
           }
         }
       }

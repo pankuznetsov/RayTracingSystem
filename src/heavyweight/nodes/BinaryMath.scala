@@ -4,7 +4,7 @@ import lightweight.World
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, Node}
 
-case class BinaryMath(override val inputs: Array[Container], override val outputs: Array[Container], val optionIndex: Int) extends Node(inputs, outputs) {
+case class BinaryMath(override val inputs: Array[Container], override val outputs: Array[Container], optionIndex: Int) extends Node(inputs, outputs) {
   /*
     from code:
     0). Option index (

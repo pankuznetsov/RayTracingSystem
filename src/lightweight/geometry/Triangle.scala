@@ -16,9 +16,9 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
 
   def scale(zoom: Vector3D) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
-  def getNormal = ((b - a) crossProduct (c - a)).normalized
+  @inline def getNormal = ((b - a) crossProduct (c - a)).normalized
 
-  def intersectionTime(ray: Ray): Double = {
+  @inline def intersectionTime(ray: Ray): Double = {
     val temporary = ray.direction dotProduct supportingPlane.normal.normalized
     if (temporary != 0) ((supportingPlane.origin - ray.origin) dotProduct supportingPlane.normal) / temporary else
     if (temporary != 0)
@@ -27,13 +27,20 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
       Double.MaxValue
   }
 
-  def sameQuadrant(ray: Ray): Boolean = {
+  @inline def sameQuadrant(ray: Ray): Boolean = {
     var same: Boolean = false
     for (i <- 0 until 3) same = same || (getVertex(i) - ray.origin).sameQuadrant(ray.direction)
     return same
   }
 
-  def intersectionWithRay(ray: Ray): (Vector3D, Double) = {
+  @inline def backQuadrant(ray: Ray): Boolean = {
+    var back: Boolean = false
+    var i: Int = 0
+    while (i < 3) { back = back || (getVertex(i) - ray.origin).backQuadrant(ray.direction); i += 1; }
+    return back
+  }
+
+  @inline def intersectionWithRay(ray: Ray): (Vector3D, Double) = {
     val temporary = ray.direction dotProduct supportingPlane.normal.normalized
     var time: Double = 0
     if (temporary > Constants.EPSILON || (temporary < -Constants.EPSILON && dualfacing))
@@ -60,7 +67,7 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     return (hitPoint, time)
   }
 
-  def getVertex(number: Int): Vector3D = {
+  @inline def getVertex(number: Int): Vector3D = {
     number match {
       case 0 => a
       case 1 => b
