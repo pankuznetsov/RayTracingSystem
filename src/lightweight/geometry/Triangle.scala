@@ -12,7 +12,7 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
 
   def move(displacement: Vector3D) = Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume, uwCoordinates)
 
-  def scale(zoom: Double) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
+  def scale(zoom: Float) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
   def scale(zoom: Vector3D) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
 
@@ -36,13 +36,13 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
   @inline def backQuadrant(ray: Ray): Boolean = {
     var back: Boolean = false
     var i: Int = 0
-    while (i < 3) { back = back || (getVertex(i) - ray.origin).backQuadrant(ray.direction); i += 1; }
+    while (i < 3) { back = back && (getVertex(i) - ray.origin).backQuadrant(ray.direction); i += 1; }
     return back
   }
 
-  @inline def intersectionWithRay(ray: Ray): (Vector3D, Double) = {
+  @inline def intersectionWithRay(ray: Ray): (Vector3D, Float) = {
     val temporary = ray.direction dotProduct supportingPlane.normal.normalized
-    var time: Double = 0
+    var time: Float = 0
     if (temporary > Constants.EPSILON || (temporary < -Constants.EPSILON && dualfacing))
       time = ((supportingPlane.origin - ray.origin) dotProduct supportingPlane.normal) / temporary
     else
@@ -76,10 +76,8 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     }
   }
 
-  def barycentricToCartesian3D(uvw: (Double, Double, Double)): Vector3D =
-    Vector3D(uvw._1 * a.x + uvw._2 * b.x + uvw._3 * a.x,
-      uvw._1 * a.y + uvw._2 * b.y + uvw._3 * c.y,
-      uvw._1 * a.z + uvw._2 * b.z + uvw._3 * c.z)
+  def barycentricToCartesian3D(uvw: (Float, Float, Float)): Vector3D =
+    Vector3D(uvw._1 * a.x + uvw._2 * b.x + uvw._3 * a.x, uvw._1 * a.y + uvw._2 * b.y + uvw._3 * c.y, uvw._1 * a.z + uvw._2 * b.z + uvw._3 * c.z)
 
   def getPerimeter: Double = (b - a).magnitude + (c - b).magnitude + (a - c).magnitude
 
@@ -91,15 +89,7 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     Math.sqrt(semiPerimeter * (semiPerimeter - ab) * (semiPerimeter - bc) * (semiPerimeter - ca))
   }
 
-  def scatter(scattering: Double): Vector3D = {
-    val ab = (b - a).normalized
-    val bc = (c - b).normalized
-    val ca = (a - c).normalized
-    return ((supportingPlane.normal * Math.random()).linearInterpolation(
-      (supportingPlane.normal * Math.random() + ab * Math.random() + bc * Math.random() + ca * Math.random()).normalized, scattering)).normalized
-  }
-
-  def getBarycentric(point: Vector3D): (Double, Double, Double) = {
+  def getBarycentric(point: Vector3D): (Float, Float, Float) = {
     val lambdaZero = ((b.y - c.y) * (point.x - c.x) + (c.x - b.x) * (point.y - c.y)) / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y))
     val lambdaOne = ((c.y - a.y) * (point.x - c.x) + (a.x - c.x) * (point.y - c.y)) / ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y))
     val lambdaTwo = 1 - lambdaZero - lambdaOne

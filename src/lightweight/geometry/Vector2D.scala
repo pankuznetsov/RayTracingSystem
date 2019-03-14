@@ -4,20 +4,20 @@ import lightweight.nodes.RootType
 
 import scala.math.{pow, sqrt}
 
-case class Vector2D(x: Double, y: Double) extends RootType() {
+case class Vector2D(x: Float, y: Float) extends RootType() {
 
   def +(other: Vector2D) = Vector2D(x + other.x, y + other.y)
   def -(other: Vector2D) = Vector2D(x - other.x, y - other.y)
   def *(other: Vector2D) = Vector2D(x * other.x, y * other.y)
-  def *(scalar: Double) = Vector2D(x * scalar, y * scalar)
+  def *(scalar: Float) = Vector2D(x * scalar, y * scalar)
   def /(other: Vector2D) = Vector2D(x / other.x, y / other.y)
 
   def dotProduct(other: Vector2D) = x * other.x + y * other.y
 
-  def magnitude = sqrt(pow(x, 2) + pow(y, 2))
+  def magnitude: Float = sqrt(pow(x, 2) + pow(y, 2)).asInstanceOf[Float]
 
   def normalized: Vector2D = {
-    val module: Double = magnitude
+    val module: Float = magnitude
     Vector2D(x / module, y / module)
   }
 
@@ -29,7 +29,7 @@ case class Vector2D(x: Double, y: Double) extends RootType() {
     cLength > 2
   }
 
-  def linearInterpolation(other: Vector2D, mix: Double): Vector2D = (this * (1 - mix)) + (other * mix)
+  def linearInterpolation(other: Vector2D, mix: Float): Vector2D = (this * (1 - mix)) + (other * mix)
 
   override def toString = s"[$x, $y]"
 }

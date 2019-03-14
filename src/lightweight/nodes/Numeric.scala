@@ -1,3 +1,3 @@
 package lightweight.nodes
 
-case class Numeric(value: Double) extends RootType()
+case class Numeric(value: Float) extends RootType()

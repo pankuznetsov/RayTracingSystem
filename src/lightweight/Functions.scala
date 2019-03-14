@@ -48,11 +48,11 @@ object Functions {
   def getNormal(triangle: Triangle, ray: Ray): Vector3D = if (triangle.supportingPlane.normal.sameDirection(ray.direction))
     triangle.supportingPlane.normal.invert else triangle.supportingPlane.normal
 
-  def barycentricToCartesian(uwCoordinates: UVCoordinates, uvw: (Double, Double, Double)): Vector2D =
+  def barycentricToCartesian(uwCoordinates: UVCoordinates, uvw: (Float, Float, Float)): Vector2D =
     Vector2D(uvw._1 * uwCoordinates.a.x + uvw._2 * uwCoordinates.b.x + uvw._3 * uwCoordinates.c.x,
       uvw._1 * uwCoordinates.a.y + uvw._2 * uwCoordinates.b.y + uvw._3 * uwCoordinates.c.y)
 
-  def rotate(mesh: Array[Vector3D], pitch: Double, roll: Double, yaw: Double): IndexedSeq[Vector3D] = {
+  def rotate(mesh: Array[Vector3D], pitch: Float, roll: Float, yaw: Float): IndexedSeq[Vector3D] = {
     val cosYaw = Math.cos(yaw)
     val sinYaw = Math.sin(yaw)
 
@@ -76,9 +76,9 @@ object Functions {
 
     val rotatedMesh: IndexedSeq[Vector3D] = for {
       index <- mesh.indices
-      vertex = Vector3D(axisXX * mesh(index).x + axisXY * mesh(index).y + axisXZ * mesh(index).z,
-        axisYX * mesh(index).x + axisYY * mesh(index).y + axisYZ * mesh(index).z,
-        axisZX * mesh(index).x + axisZY * mesh(index).y + axisZZ * mesh(index).z)
+      vertex = Vector3D((axisXX * mesh(index).x + axisXY * mesh(index).y + axisXZ * mesh(index).z).asInstanceOf[Float],
+        (axisYX * mesh(index).x + axisYY * mesh(index).y + axisYZ * mesh(index).z).asInstanceOf[Float],
+        (axisZX * mesh(index).x + axisZY * mesh(index).y + axisZZ * mesh(index).z).asInstanceOf[Float])
     } yield vertex
     rotatedMesh
   }

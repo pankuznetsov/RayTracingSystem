@@ -15,13 +15,13 @@ abstract class ScatteringSurface(override val inputs: Array[Container], override
 
   def scatter(mesh: Mesh, world: World, triangleIndex: Int,
                        ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int,
-                       color: Color, roughness: Double, rays: Int,
+                       color: Color, roughness: Float, rays: Int,
                        normalMap: Vector3D, flatNormal: Vector3D,
                        integral: LampIlluminationOutput): Array[Ray]
 
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
     val color = Functions.toColor(inputs(0).content)
-    val roughness: Double = inputs(1).content.asInstanceOf[Numeric].value
+    val roughness: Float = inputs(1).content.asInstanceOf[Numeric].value
     val rays: Int = inputs(2).content.asInstanceOf[Numeric].value.asInstanceOf[Int]
     var normalMap: Vector3D = if (inputs(3) != null) Functions.toVector(inputs(3).content) else null  // Take normal
     val integral: LampIlluminationOutput = if (inputs(4) != null) inputs(4).content.asInstanceOf[LampIlluminationOutput] else LampIlluminationOutput(Color(0, 0, 0), 0)
@@ -29,7 +29,7 @@ abstract class ScatteringSurface(override val inputs: Array[Container], override
     if (normalMap == null) normalMap = triangleNormal
     val scatteredRays: Array[Ray] = scatter(mesh, world, triangleIndex,
       ray, hitPoint, coordinates, shadersLeft,
-      color, roughness: Double,
+      color, roughness: Float,
       rays, normalMap, triangleNormal, integral)
     var red: Float = 0f
     var green: Float = 0f

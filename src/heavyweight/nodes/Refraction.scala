@@ -8,10 +8,10 @@ case class Refraction(override val inputs: Array[Container], override val output
 
   override def scatter(mesh: Mesh, world: World, triangleIndex: Int,
                        ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, shadersLeft: Int,
-                       color: Color, roughness: Double, rays: Int,
+                       color: Color, roughness: Float, rays: Int,
                        normalMap: Vector3D, flatNormal: Vector3D,
                        integral: LampIlluminationOutput): Array[Ray] = {
-    val thisIor = inputs(5).content.asInstanceOf[Numeric].value
+    val thisIor: Float = inputs(5).content.asInstanceOf[Numeric].value
     val worldIor = world.worldIOR
     RayDistributor.getRandomRays(
       flatNormal,

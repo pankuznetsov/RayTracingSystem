@@ -20,7 +20,8 @@ case class RenderingThread(mesh: Mesh, world: World, samples: Int, shadersLeft: 
         for (sample <- everyN until samples * samples by cores) {
           val sampleX: Int = sample % samples
           val sampleY: Int = sample / samples
-          val rayFromCamera = Ray(Vector3D((x / 2) + sampleX.asInstanceOf[Double] / samples + Math.random() / samples, (y / 2) + sampleY.asInstanceOf[Double] / samples + Math.random() / samples, 0), Vector3D(0, 0, 1))
+          val rayFromCamera = Ray(Vector3D((x / 2) + sampleX.asInstanceOf[Float] / samples + Math.random().asInstanceOf[Float] / samples,
+            (y / 2) + sampleY.asInstanceOf[Float] / samples + Math.random().asInstanceOf[Float] / samples, 0), Vector3D(0, 0, 1))
           pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft)._2
         }
         if (image(x)(y) != null)
@@ -28,7 +29,7 @@ case class RenderingThread(mesh: Mesh, world: World, samples: Int, shadersLeft: 
         else
           image(x)(y) = (pixel / (samples * samples))
       }
-      //println(s"#${everyN} - line rendered: ${y}")
+      println(s"#${everyN} - line rendered: ${y}")
     }
     val endTime = System.currentTimeMillis()
     time = (endTime - startTime).asInstanceOf[Double] / 1000.0

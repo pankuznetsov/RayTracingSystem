@@ -51,7 +51,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     if (tracingResults._2 != null && tracingResults._2.nonEmpty)
       for (i <- (0 until stepNumber).reverse) {
         for ((material: VolumeOutput, quantity: Int) <- tracingResults._2) {
-          val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * i) + (direction * Math.random() * Constants.VOLUME_STEP_SIZE)
+          val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * i) + (direction * Math.random().asInstanceOf[Float] * Constants.VOLUME_STEP_SIZE)
           for (q <- 0 until quantity) {
             material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, result, shadersLeft)
             result = material.outputs(0).content.asInstanceOf[Color]

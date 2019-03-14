@@ -12,11 +12,11 @@ object RayDistributor {
   def generate(n: Int): Unit = {
     rays = Array.ofDim[Vector3D](n)
     for (i <- 0 until n) {
-      rays(i) = Vector3D(random() - 0.5, random() - 0.5, random() - 0.5).normalized
+      rays(i) = Vector3D(random().asInstanceOf[Float] - 0.5f, random().asInstanceOf[Float] - 0.5f, random().asInstanceOf[Float] - 0.5f).normalized
     }
   }
 
-  def getRandomRays(normal: Vector3D, vector: Vector3D, n: Int, scattering: Double): Array[Vector3D] =
+  def getRandomRays(normal: Vector3D, vector: Vector3D, n: Int, scattering: Float): Array[Vector3D] =
     (for (i <- 0 until n)
           yield {
             val r = (vector + (newRandomVector3D() * (scattering))).normalized
@@ -25,5 +25,5 @@ object RayDistributor {
 
   def getRandomVector3D(): Vector3D = rays((random() * rays.length).asInstanceOf[Int])
 
-  def newRandomVector3D(): Vector3D = Vector3D(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalized
+  def newRandomVector3D(): Vector3D = Vector3D(Math.random().asInstanceOf[Float] - 0.5f, Math.random().asInstanceOf[Float] - 0.5f, Math.random().asInstanceOf[Float] - 0.5f).normalized
 }

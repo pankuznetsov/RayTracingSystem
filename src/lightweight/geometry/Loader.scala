@@ -53,13 +53,13 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
     if (number.length > 0) number.toString.toInt else 0
   }
 
-  private def parseFloat(): Double = {
+  private def parseFloat(): Float = {
     val number: StringBuilder = new StringBuilder()
     while (pointer < rawObj.size && (rawObj.charAt(pointer).toString.matches("[0-9.\\-]") || rawObj.charAt(pointer).toString.equals("-"))) {
       number.append(rawObj.charAt(pointer))
       pointer += 1
     }
-    if (number.length > 0) number.toString.toDouble else 0
+    if (number.length > 0) number.toString.toFloat else 0
   }
 
   private def parseUW(): Vector2D = {
@@ -70,9 +70,9 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
     }
     println()
     skipTrash()
-    val u: Double = parseFloat()
+    val u: Float = parseFloat()
     skipTrash()
-    val v: Double = parseFloat()
+    val v: Float = parseFloat()
     skipTrash()
     val uw = Vector2D(u, v)
     uwMap += uw
