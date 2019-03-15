@@ -64,7 +64,7 @@ object Main {
 
 
   def main(args: Array[String]): Unit = {
-    val skyEmission = Factories.newEmission(Container(null, Color(0.1f, 0.8f, 0.9f)), Container(null, Numeric(1.1f)))
+    val skyEmission = Factories.newEmission(Container(null, Color(0.3f, 0.5f, 0.75f)), Container(null, Numeric(1.3f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null, 1)
 
@@ -126,13 +126,13 @@ object Main {
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1600, 0), Vector2D(0, 1050)))) */
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.75f).move(Vector3D(30, 10, 130))), Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
-      PointLight(Vector3D(20, 80, 500), 64, Float.MaxValue, lampSurfaceRed, true, 1),
-      PointLight(Vector3D(-70, -111, 250), 128, Float.MaxValue, lampSurfaceRed, true, 1)), HashMap(0 -> 2, 1 -> 3))
+    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(6f).move(Vector3D(-50, -320, 80))), Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
+      PointLight(Vector3D(200, 20, 50), 96, Float.MaxValue, lampSurfaceRed, true, 1),
+      PointLight(Vector3D(-90, -151, 40), 128, Float.MaxValue, lampSurfaceRed, true, 1)), HashMap(0 -> 2, 1 -> 3))
     // val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
-    val camera = lightweight.PerspectiveCamera(Vector3D(0, 0, 0), null, 0.5f, 380, 320, false)
+    val camera = lightweight.PerspectiveCamera(Vector3D(0, 0, 0), null, 0.5f, 640, 480, false)
     println("started")
-    val image = camera.render(mesh, world, 1, 3)
-    displayImage(image, 380, 320)
+    val image = camera.render(mesh, world, 3, 4)
+    displayImage(image, 640, 480)
   }
 }

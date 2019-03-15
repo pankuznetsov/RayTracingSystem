@@ -27,12 +27,6 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
       Double.MaxValue
   }
 
-  @inline def sameQuadrant(ray: Ray): Boolean = {
-    var same: Boolean = false
-    for (i <- 0 until 3) same = same || (getVertex(i) - ray.origin).sameQuadrant(ray.direction)
-    return same
-  }
-
   @inline def backQuadrant(ray: Ray): Boolean = {
     var back: Boolean = false
     var i: Int = 0
