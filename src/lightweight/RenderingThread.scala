@@ -7,7 +7,7 @@ case class RenderingThread(mesh: Mesh, world: World, samples: Int, shadersLeft: 
                            direction: Vector3D, image: Array[Array[lightweight.nodes.Color]],
                            scale: Double, width: Int, height: Int, cores: Int, everyN: Int) extends Thread {
 
-  private var finished: Boolean = false
+  private var finished: Boolean = true
   private var time: Double = Double.NaN
 
   def isFinished(): Boolean = finished

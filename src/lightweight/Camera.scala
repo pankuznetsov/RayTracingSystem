@@ -11,7 +11,6 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
     val startTime = System.currentTimeMillis()
     for(y: Int <- 0 until height){
       for(x: Int <- 0 until width){
-        // val rayFromCamera = Ray(location + Vector3D(imageRatio._1 / width * x, imageRatio._2 / height * y, 0) - Vector3D(imageRatio._1 / 2, imageRatio._2, 0), Vector3D(0,0,1))
         var pixel = Color(0, 0, 0)
         for (sampleY: Int <- 0 until samples)
           for (sampleX: Int <- 0 until samples) {
