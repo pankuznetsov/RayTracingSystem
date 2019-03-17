@@ -10,6 +10,16 @@ case class Mix(override val inputs: Array[Container], override val outputs: Arra
     val factor: Float = inputs(0).content.asInstanceOf[lightweight.nodes.Numeric].value
     val firstComponent: Color = inputs(1).content.asInstanceOf[Color]
     val secondComponent: Color = inputs(2).content.asInstanceOf[Color]
-    firstComponent.linearInterpolation(secondComponent, factor)
+    firstComponent.linearInterpolation(secondComponent,
+      if (factor > 1) {
+        1
+      } else {
+        if (factor < 0) {
+          0
+        } else {
+          factor
+        }
+      }
+    )
   }
 }

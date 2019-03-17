@@ -216,7 +216,7 @@ object Factories {
     vectorMath
   }
 
-  def newColorRamp(factore: Container, interpolateTipe: Int, colorPoints: Array[(Double, lightweight.nodes.Color)]): ColorRamp = {
+  def newColorRamp(factore: Container, interpolateTipe: Int, colorPoints: Array[(Float, lightweight.nodes.Color)]): ColorRamp = {
     val colorRampInputs = Array.ofDim[Container](1)
     val colorRampOutputs = Array.ofDim[Container](1)
     val colorRamp = ColorRamp(colorRampInputs, colorRampOutputs, colorPoints, interpolateTipe)
