@@ -281,12 +281,12 @@ object Factories {
     rayTeleport
   }
 
-  def newChekcerTexture(vector: Container, inputOne: Container, firstColor: Container, secondColor: Container): CheckerTexture = {
+  def newChekcerTexture(vector: Container, size: Container, firstColor: Container, secondColor: Container): CheckerTexture = {
     val inputs = Array.ofDim[Container](4)
     val outputs = Array.ofDim[Container](2)
     val checkerTexture = CheckerTexture(inputs, outputs)
     inputs(0) = vector
-    inputs(1) = inputOne
+    inputs(1) = size
     inputs(2) = firstColor
     inputs(3) = secondColor
     outputs(0) = Container(checkerTexture, null)
