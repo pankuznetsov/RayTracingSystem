@@ -16,6 +16,10 @@ case class VolumeOutput(override val inputs: Array[Container], override val outp
   }
 
   override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
-    outputs(0).content = inputs(0).content
+    if (inputs(0) == null) {
+      outputs(0).content = backColor
+    } else {
+      outputs(0).content = inputs(0).content
+    }
   }
 }
