@@ -1,12 +1,12 @@
 package heavyweight.nodes
 
-import lightweight.World
+import lightweight.{RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, Node}
 
 case class VectorMath(override val inputs: Array[Container], override val outputs: Array[Container], optionIndex: Int) extends Node(inputs, outputs) {
 
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit = {
     if (optionIndex < 9 || optionIndex > 0) null
     if (optionIndex == 0){
       inputs(0).content.asInstanceOf[Vector3D] + inputs(1).content.asInstanceOf[Vector3D]

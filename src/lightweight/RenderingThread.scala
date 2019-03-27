@@ -22,7 +22,7 @@ case class RenderingThread(mesh: Mesh, world: World, samples: Int, shadersLeft: 
           val sampleY: Int = sample / samples
           val rayFromCamera = Ray(Vector3D((x / 2) + sampleX.asInstanceOf[Float] / samples + Math.random().asInstanceOf[Float] / samples,
             (y / 2) + sampleY.asInstanceOf[Float] / samples + Math.random().asInstanceOf[Float] / samples, 0), Vector3D(0, 0, 1))
-          pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft)._2
+          pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft, RayOriginInfo(null, true))._2
         }
         if (image(x)(y) != null)
           image(x)(y) = image(x)(y) + pixel / (samples * samples)

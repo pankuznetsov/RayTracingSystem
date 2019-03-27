@@ -1,6 +1,6 @@
 package lightweight.geometry
 
-import lightweight.{Lamp, World}
+import lightweight.{Lamp, RayOriginInfo, World}
 import lightweight.nodes.{Color, ColorWithDensity, VolumeOutput}
 
 import scala.collection.immutable.HashMap
@@ -15,7 +15,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     var hitPoint: Vector3D = null
     var time: Double = Double.PositiveInfinity
     for (triangle <- 0 until mesh.mesh.length) {
-      if (triangle != triangleIndex && !mesh.mesh(triangle).backQuadrant(this)) {
+      if (triangle != triangleIndex && mesh.mesh(triangle).otherQuadrant(this)) {
         val intersection = mesh.mesh(triangle).intersectionWithRay(this)
         if (intersection != null && intersection._2 < time) {
           index = triangle
@@ -43,7 +43,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     ((index, hitPoint, time), volumes, lampProxima)
   }
 
-  @inline def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, afterColor: Color, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): Color = {
+  @inline def renderVolume(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, rayOriginInfo: RayOriginInfo, afterColor: Color, tracingResults: ((Int, Vector3D, Double), HashMap[VolumeOutput, Int], (Int, Vector3D, Double, Double))): Color = {
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
     var result: Color = afterColor
@@ -53,7 +53,7 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
         for ((material: VolumeOutput, quantity: Int) <- tracingResults._2) {
           val coordinates: Vector3D = origin + direction * (Constants.VOLUME_STEP_SIZE * i) + (direction * Math.random().asInstanceOf[Float] * Constants.VOLUME_STEP_SIZE)
           for (q <- 0 until quantity) {
-            material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, result, shadersLeft)
+            material.run(mesh, world, triangleIndex, this, hitTheSurface._2, coordinates, result, shadersLeft, rayOriginInfo)
             result = material.outputs(0).content.asInstanceOf[Color]
           }
         }
@@ -61,24 +61,28 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     result
   }
 
-  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int): (Boolean, Color) = {
+  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, parentShader: RayOriginInfo): (Boolean, Color) = {
     val tracingResults = traceRay(mesh, world, triangleIndex)
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
     val lamp = tracingResults._3
     val newTriangleIndex = if (hitTheSurface != null && hitTheSurface._3 > Constants.EPSILON) hitTheSurface._1 else -1
+    if (hitTheSurface._2 == null && !(hitTheSurface._3 > Constants.EPSILON) && lamp == null) {
+      world.skySurface.run(mesh, world, -1, this, null, null, null, shadersLeft, parentShader)
+      (false, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, world.skySurface.outputs(0).content.asInstanceOf[Color], tracingResults))
+    }
     if (hitTheSurface._2 != null && mesh.mesh(hitTheSurface._1).surface != null && hitTheSurface._3 > Constants.EPSILON) {
-      mesh.mesh(tracingResults._1._1).surface.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft)
+      mesh.mesh(tracingResults._1._1).surface.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft, parentShader)
     }
     if (lamp != null) {
-      mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft)
-      val result = (false, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults))
+      mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft, parentShader)
+      val result = (false, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults))
       return result
     }
     if (hitTheSurface._2 != null && hitTheSurface._3 > Constants.EPSILON) {
-      (true, renderVolume(mesh, world, triangleIndex, shadersLeft, mesh.mesh(tracingResults._1._1).surface.outputs(0).content.asInstanceOf[Color], tracingResults))
+      (true, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, mesh.mesh(tracingResults._1._1).surface.outputs(0).content.asInstanceOf[Color], tracingResults))
     } else {
-      world.skySurface.run(mesh, world, -1, this, null, null, null, shadersLeft)
+      world.skySurface.run(mesh, world, -1, this, null, null, null, shadersLeft, parentShader)
       (false, world.skySurface.outputs(0).content.asInstanceOf[Color])
     }
   }

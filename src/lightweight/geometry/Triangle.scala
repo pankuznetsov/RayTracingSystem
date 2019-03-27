@@ -34,8 +34,17 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     return back
   }
 
+  @inline def otherQuadrant(ray: Ray): Boolean = {
+    val first = a.getQuadrant(ray.direction)
+    val second = b.getQuadrant(ray.direction)
+    if (first != second) return false
+    val third = c.getQuadrant(ray.direction)
+    if (first != third) return false
+    return true
+  }
+
   @inline def intersectionWithRay(ray: Ray): (Vector3D, Float) = {
-    val temporary = ray.direction dotProduct supportingPlane.normal.normalized
+    val temporary = ray.direction dotProduct supportingPlane.normal
     var time: Float = 0
     if (temporary > Constants.EPSILON || (temporary < -Constants.EPSILON && dualfacing))
       time = ((supportingPlane.origin - ray.origin) dotProduct supportingPlane.normal) / temporary

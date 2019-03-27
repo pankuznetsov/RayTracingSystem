@@ -1,6 +1,6 @@
 package lightweight.nodes
 
-import lightweight.{Lamp, World}
+import lightweight.{Lamp, RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, Triangle, Vector3D}
 
 import scala.collection.immutable.HashMap
@@ -16,22 +16,19 @@ abstract class Node(val inputs: Array[Container], val outputs: Array[Container],
     }
   }
 
-  def run(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
+  def run(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit = {
     if (shadersLeft >= 0 && !complite) {
       for (field <- inputs)
         if (field != null && field.parentNode != null)
-          field.parentNode.run(mesh, world, triangleIndex, ray, hitPoint, coordinates, backColor, shadersLeft)
-      doThings(mesh, world, triangleIndex, ray, hitPoint, coordinates, backColor, shadersLeft)
+          field.parentNode.run(mesh, world, triangleIndex, ray, hitPoint, coordinates, backColor, shadersLeft, rayOriginInfo)
+      doThings(mesh, world, triangleIndex, ray, hitPoint, coordinates, backColor, shadersLeft, rayOriginInfo)
       complite = true
     }
   }
 
-  def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit
+  def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit
 
   def throwToLights(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, normal: Vector3D, shadersLeft: Int): (Int, Color) = {
-    var red: Float = 0f
-    var green: Float = 0f
-    var blue: Float = 0f
     var integral: Color = Color(0, 0, 0)
     var lights: Int = 0
     val spawn = if (hitPoint != null) hitPoint else coordinates
@@ -43,10 +40,10 @@ abstract class Node(val inputs: Array[Container], val outputs: Array[Container],
         if (coordinates != null || toLight.direction.sameDirection(normal)) {
           val collision = lamp.isCollide(mesh, triangleIndex, toLight)
           if (collision != null) {
-            val renderSample = toLight.renderSample(mesh, world, triangleIndex, shadersLeft)
+            val renderSample = toLight.renderSample(mesh, world, triangleIndex, shadersLeft, RayOriginInfo(this, false))
             if  (renderSample._2 != null) sampleIntegral += renderSample._2 / collision._2 / lamp.samples
           } else {
-            val r = toLight.renderSample(mesh, world, triangleIndex, shadersLeft)._2
+            val r = toLight.renderSample(mesh, world, triangleIndex, shadersLeft, RayOriginInfo(this, false))._2
             if (r != null)
               sampleIntegral += r / lamp.samples
           }

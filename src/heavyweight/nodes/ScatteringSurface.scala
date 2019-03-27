@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.{Functions, World}
+import lightweight.{Functions, RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node, Numeric}
 
@@ -19,7 +19,7 @@ abstract class ScatteringSurface(override val inputs: Array[Container], override
                        normalMap: Vector3D, flatNormal: Vector3D,
                        integral: LampIlluminationOutput): Array[Ray]
 
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit = {
     val color = Functions.toColor(inputs(0).content)
     val roughness: Float = inputs(1).content.asInstanceOf[Numeric].value
     val rays: Int = inputs(2).content.asInstanceOf[Numeric].value.asInstanceOf[Int]
@@ -35,7 +35,7 @@ abstract class ScatteringSurface(override val inputs: Array[Container], override
     var green: Float = 0f
     var blue: Float = 0f
     for (scatterdRay <- scatteredRays) {
-      val rayColor = scatterdRay.renderSample(mesh, world, triangleIndex, shadersLeft)
+      val rayColor = scatterdRay.renderSample(mesh, world, triangleIndex, shadersLeft, rayOriginInfo)
       if (rayColor._2 != null) {
         red += (rayColor._2.red / scatteredRays.length)
         green += (rayColor._2.green / scatteredRays.length)

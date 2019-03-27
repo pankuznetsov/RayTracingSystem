@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.World
+import lightweight.{RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, RayDistributor, Vector3D}
 import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node}
 
@@ -11,7 +11,7 @@ case class VolumeScatter(override val inputs: Array[Container], override val out
     2. Density
     3. Anisotropic
   */
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit = {
     val volumeColor: Color = inputs(0).content.asInstanceOf[Color]
     val volumeDensity: Float = inputs(1).content.asInstanceOf[lightweight.nodes.Numeric].value
     val volumeAnisotropic: Float = inputs(2).content.asInstanceOf[lightweight.nodes.Numeric].value
@@ -26,7 +26,7 @@ case class VolumeScatter(override val inputs: Array[Container], override val out
       // val outRay: Ray = Ray(coordinates, lightweight.geometry.RayDistributor.newRandomVector3D() + ray.direction / (1 - volumeAnisotropic) + volumeNormal * volumeAnisotropic)
       val outRay = Ray(coordinates,
         (lightweight.geometry.RayDistributor.newRandomVector3D() + volumeNormal + ray.direction * (volumeAnisotropic / Float.MinPositiveValue * 2)).normalized)
-      val renderSampleResult = outRay.renderSample(mesh: Mesh, world: World, -1, shadersLeft)._2
+      val renderSampleResult = outRay.renderSample(mesh: Mesh, world: World, -1, shadersLeft, RayOriginInfo(this, false))._2
       if (renderSampleResult != null)
         color += renderSampleResult
     }

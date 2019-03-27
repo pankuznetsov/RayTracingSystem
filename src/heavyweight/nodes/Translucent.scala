@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.{Functions, World}
+import lightweight.{Functions, RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, RayDistributor, Vector3D}
 import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node, Numeric}
 
@@ -14,5 +14,6 @@ case class Translucent(override val inputs: Array[Container], override val outpu
     flatNormal.invert(),
     (flatNormal + normalMap).normalized.invert(),
     rays.asInstanceOf[Int],
-    roughness).map(x => Ray(hitPoint, x))
+    roughness,
+    RayOriginInfo(this, false)).map(x => Ray(hitPoint, x))
 }

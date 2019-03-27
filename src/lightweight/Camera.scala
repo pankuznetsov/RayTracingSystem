@@ -16,7 +16,7 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
           for (sampleX: Int <- 0 until samples) {
             val rayFromCamera = Ray(Vector3D((x / 2) + sampleX.asInstanceOf[Float] / samples + Math.random().asInstanceOf[Float] / samples,
               (y / 2) + sampleY.asInstanceOf[Float] / samples + Math.random().asInstanceOf[Float] / samples, 0), Vector3D(0, 0, 1))
-            pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft)._2
+            pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft, RayOriginInfo(null, true))._2
           }
         image(x)(y) = pixel / (samples * samples)
         // println(s"pixel rendered - x: ${x}, y: ${y}")

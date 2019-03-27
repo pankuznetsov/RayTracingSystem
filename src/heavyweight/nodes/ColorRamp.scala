@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.{Functions, World}
+import lightweight.{Functions, RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, Node, Numeric}
 
@@ -11,7 +11,7 @@ case class ColorRamp(override val inputs: Array[Container],
   /* Inputs
     0. Facture
    */
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit = {
     val facture: Float = Functions.toNumeric(inputs(0).content).asInstanceOf[Numeric].value
     if (facture <= colorPoints(0)._1) {
       outputs(0).content = colorPoints(0)._2

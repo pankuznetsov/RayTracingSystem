@@ -48,6 +48,8 @@ case class Vector3D(x: Float, y: Float, z: Float) extends RootType() {
 
   @inline def backQuadrant(other: Vector3D): Boolean = ((x > 0) != (other.x > 0)) && ((y > 0) != (other.y > 0)) && ((z > 0) != (other.z > 0))
 
+  @inline def getQuadrant(other: Vector3D): (Boolean, Boolean, Boolean) = (x > other.x, y > other.y, z > other.z)
+
   def toColor: Color = Color(Functions.clamp[Float](x.asInstanceOf[Float], 0, 1),
     Functions.clamp[Float](y.asInstanceOf[Float], 0, 1),
     Functions.clamp[Float](z.asInstanceOf[Float], 0, 1))

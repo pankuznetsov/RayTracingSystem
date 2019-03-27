@@ -317,4 +317,19 @@ object Factories {
     outputs(0) = Container(mix, null)
     mix
   }
+
+  def newLightPath(): LightPath = {
+    val inputs = Array.ofDim[Container](0)
+    val outputs = Array.ofDim[Container](8)
+    val lightPath = LightPath(inputs, outputs)
+    outputs(0) = Container(lightPath, null)
+    outputs(1) = Container(lightPath, null)
+    outputs(2) = Container(lightPath, null)
+    outputs(3) = Container(lightPath, null)
+    outputs(4) = Container(lightPath, null)
+    outputs(5) = Container(lightPath, null)
+    outputs(6) = Container(lightPath, null)
+    outputs(7) = Container(lightPath, null)
+    lightPath
+  }
 }

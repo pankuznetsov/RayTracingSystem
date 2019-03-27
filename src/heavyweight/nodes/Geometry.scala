@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.World
+import lightweight.{RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, Node}
 
@@ -14,7 +14,7 @@ case class Geometry(override val inputs: Array[Container], override val outputs:
     4. Back facing
     5. Volume coordinates
    */
-  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int): Unit = {
+  override def doThings(mesh: Mesh, world: World, triangleIndex: Int, ray: Ray, hitPoint: Vector3D, coordinates: Vector3D, backColor: Color, shadersLeft: Int, rayOriginInfo: RayOriginInfo): Unit = {
     outputs(0).content = hitPoint
     outputs(1).content = ray.direction
     outputs(2).content = if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction))

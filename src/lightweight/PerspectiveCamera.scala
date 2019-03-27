@@ -24,7 +24,7 @@ case class PerspectiveCamera(location: Vector3D, direction: Vector3D, viewingAng
             } else {
               null
             }
-            pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft)._2
+            pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft, RayOriginInfo(null, true))._2
           }
         image(x)(y) = pixel / (samples * samples)
         // println(s"pixel rendered - x: ${x}, y: ${y}")

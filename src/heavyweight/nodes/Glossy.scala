@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.{Functions, World}
+import lightweight.{Functions, RayOriginInfo, World}
 import lightweight.geometry._
 import lightweight.nodes.{Color, Container, LampIlluminationOutput, Node, Numeric}
 
@@ -11,10 +11,11 @@ case class Glossy(override val inputs: Array[Container], override val outputs: A
                        color: Color, roughness: Float, rays: Int,
                        normalMap: Vector3D, flatNormal: Vector3D,
                        integral: LampIlluminationOutput): Array[Ray] = {
-      RayDistributor.getRandomRays(
-      flatNormal,
-      ray.direction.reflect(Plane(Vector3D(0, 0, 0), (flatNormal + normalMap).normalized)).invert(),
-      rays.asInstanceOf[Int],
-      roughness).map(x => Ray(hitPoint, x))
+      RayDistributor.getRandomRays(flatNormal,
+        ray.direction.reflect(Plane(Vector3D(0, 0, 0),
+        (flatNormal + normalMap).normalized)).invert(),
+        rays.asInstanceOf[Int],
+        roughness,
+        RayOriginInfo(this, false)).map(x => Ray(hitPoint, x))
   }
 }

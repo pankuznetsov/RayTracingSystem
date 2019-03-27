@@ -2,6 +2,8 @@ package lightweight.geometry
 
 import java.lang.Math._
 
+import lightweight.RayOriginInfo
+
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
@@ -16,7 +18,7 @@ object RayDistributor {
     }
   }
 
-  def getRandomRays(normal: Vector3D, vector: Vector3D, n: Int, scattering: Float): Array[Vector3D] =
+  def getRandomRays(normal: Vector3D, vector: Vector3D, n: Int, scattering: Float, rayOriginInfo: RayOriginInfo): Array[Vector3D] =
     (for (i <- 0 until n)
           yield {
             val r = (vector + (newRandomVector3D() * (scattering))).normalized
