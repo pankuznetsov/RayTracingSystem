@@ -43,14 +43,14 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     return true
   }
 
-  @inline def intersectionWithRay(ray: Ray): (Vector3D, Float) = {
+  @inline def intersectionWithRay(ray: Ray, nearest: Float): (Vector3D, Float) = {
     val temporary = ray.direction dotProduct supportingPlane.normal
     var time: Float = 0
     if (temporary > Constants.EPSILON || (temporary < -Constants.EPSILON && dualfacing))
       time = ((supportingPlane.origin - ray.origin) dotProduct supportingPlane.normal) / temporary
     else
       return null
-    if (time <= Constants.EPSILON) return null
+    if (time <= Constants.EPSILON || time >= nearest) return null
     val hitPoint = ray.origin + (ray.direction * time)
     val zeroEdge = b - a
     val vZero = hitPoint - a

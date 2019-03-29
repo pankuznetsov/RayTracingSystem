@@ -13,10 +13,10 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     var lamps: HashMap[Int, (Vector3D, Double, Double)] = HashMap.empty[Int, (Vector3D, Double , Double)]
     var index: Int = 0
     var hitPoint: Vector3D = null
-    var time: Double = Double.PositiveInfinity
+    var time: Float = Float.PositiveInfinity
     for (triangle <- 0 until mesh.mesh.length) {
       if (triangle != triangleIndex && mesh.mesh(triangle).otherQuadrant(this)) {
-        val intersection = mesh.mesh(triangle).intersectionWithRay(this)
+        val intersection = mesh.mesh(triangle).intersectionWithRay(this, time)
         if (intersection != null && intersection._2 < time) {
           index = triangle
           hitPoint = intersection._1
