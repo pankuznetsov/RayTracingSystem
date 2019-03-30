@@ -64,6 +64,10 @@ object Main {
 
 
   def main(args: Array[String]): Unit = {
+    val t = Triangle(Vector3D(0, 0, 0), Vector3D(1, 0, 0), Vector3D(0, 1, 0), true, null, null, null)
+    val p = Plane(Vector3D(0, 0, 0), Vector3D(1, 0, 0))
+    println(t.getBoundingCircle)
+    /*
     val skyEmission = Factories.newEmission(Container(null, Color(0.3f, 0.5f, 0.75f)), Container(null, Numeric(1.3f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null, 1)
@@ -167,5 +171,6 @@ object Main {
     println("started")
     val image = camera.render(mesh, world, 1, 2, 10)
     displayImage(image, 640, 480)
+    */
   }
 }

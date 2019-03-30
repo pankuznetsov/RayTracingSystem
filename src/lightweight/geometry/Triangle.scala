@@ -3,10 +3,11 @@ package lightweight.geometry
 import java.lang
 
 import lightweight.nodes.{SurfaceOutput, VolumeOutput}
+import lightweight.optimizations.OctanContent
 
 import scala.collection.immutable.HashMap
 
-case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UVMap, UVCoordinates]) {
+case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UVMap, UVCoordinates]) extends OctanContent {
 
   val supportingPlane: Plane = Plane(a, getNormal)
 
@@ -98,6 +99,18 @@ case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, 
     val lambdaTwo = 1 - lambdaZero - lambdaOne
     (lambdaZero, lambdaOne, lambdaTwo)
   }
+
+  @inline def getBoundingSphere: Sphere = {
+    val sphereCenter = (a + b + c) / 3
+    val distensyA = (a - sphereCenter).magnitude
+    val distensyB = (b - sphereCenter).magnitude
+    val distensyC = (c - sphereCenter).magnitude
+    val farVertix = if (distensyA > distensyB && distensyA > distensyC) { distensyA }
+    else { if (distensyB > distensyA && distensyB > distensyC) { distensyB } else { distensyC } }
+    Sphere(sphereCenter, farVertix)
+  }
+
+  def getBoundingCircle: (Sphere, Plane) = (getBoundingSphere, supportingPlane)
 
   override def toString = s"[a: \t$a, b: \t$b, c: \t$c] -> \t${supportingPlane.normal}"
 }
