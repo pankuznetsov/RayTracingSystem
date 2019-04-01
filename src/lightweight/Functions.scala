@@ -82,4 +82,23 @@ object Functions {
     } yield vertex
     rotatedMesh
   }
+
+
+  def getSmoothNormal(triangle: Triangle, hitPoint: Vector3D, sameDirection: Boolean): Vector3D = {
+    if (triangle.vertexAnormal == null || triangle.vertexBnormal == null || triangle.vertexCnormal == null) {
+      return triangle.supportingPlane.normal
+    }
+    val toA = (triangle.a - hitPoint).magnitude
+    val toB = (triangle.b - hitPoint).magnitude
+    val toC = (triangle.c - hitPoint).magnitude
+    val ratioToA = toA / (toA + toB + toC)
+    val ratioToB = toB / (toA + toB + toC)
+    val ratioToC = toC / (toA + toB + toC)
+    val resultNormal = triangle.vertexCnormal * ratioToC + triangle.vertexBnormal * ratioToB + triangle.vertexAnormal * ratioToA
+    if (sameDirection) {
+      return resultNormal
+    } else {
+      return resultNormal.invert
+    }
+  }
 }

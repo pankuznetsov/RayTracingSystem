@@ -7,15 +7,15 @@ import lightweight.optimizations.OctanContent
 
 import scala.collection.immutable.HashMap
 
-case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UVMap, UVCoordinates]) extends OctanContent {
+case class Triangle(a: Vector3D, b: Vector3D, c: Vector3D, dualfacing: Boolean, surface: SurfaceOutput, volume: VolumeOutput, uwCoordinates: HashMap[UVMap, UVCoordinates], vertexAnormal: Vector3D, vertexBnormal: Vector3D, vertexCnormal: Vector3D) extends OctanContent {
 
   val supportingPlane: Plane = Plane(a, getNormal)
 
-  def move(displacement: Vector3D) = Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume, uwCoordinates)
+  def move(displacement: Vector3D) = Triangle(a + displacement, b + displacement, c + displacement, dualfacing, surface, volume, uwCoordinates, vertexAnormal, vertexBnormal, vertexCnormal)
 
-  def scale(zoom: Float) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
+  def scale(zoom: Float) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates, vertexAnormal, vertexBnormal, vertexCnormal)
 
-  def scale(zoom: Vector3D) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates)
+  def scale(zoom: Vector3D) = Triangle(a * zoom, b * zoom, c * zoom, dualfacing, surface, volume, uwCoordinates, vertexAnormal, vertexBnormal, vertexCnormal)
 
   @inline def getNormal = ((b - a) crossProduct (c - a)).normalized
 

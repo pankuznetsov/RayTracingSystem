@@ -128,7 +128,7 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
     skipToNewLine()
   }
 
-  private def parseVertexNormal(): (Double, Double, Double) = {
+  private def parseVertexNormal(): (Float, Float, Float) = {
     skipToNewLine()
     null
   }
@@ -145,9 +145,7 @@ case class Loader(obj: String, surfaces: Array[SurfaceOutput], volumes: Array[Vo
       UVCoordinates(uwMap(first._2 - 1), uwMap(second._2 - 1), uwMap(third._2 - 1))
     } else null
     // println(s"loader, uvw: $uvw")
-    val triangle = Triangle(vetices(first._1 - 1) * 50 + Vector3D(70, 70, 190), vetices(second._1 - 1) * 50 + Vector3D(70, 70, 190), vetices(third._1 - 1) * 50 + Vector3D(70, 70, 190), true,
-      if (surfaces.length > 0 && surfaceMaterial >= 0) surfaces(surfaceMaterial) else null,
-      if (volumes.length > 0 && volumeMaterial >= 0) volumes(volumeMaterial) else null, if (uvw != null) HashMap(Strings.defaultUWMap -> uvw) else null)
+    val triangle = Triangle(vetices(first._1 - 1) * 50 + Vector3D(70, 70, 190), vetices(second._1 - 1) * 50 + Vector3D(70, 70, 190), vetices(third._1 - 1) * 50 + Vector3D(70, 70, 190), true, if (surfaces.length > 0 && surfaceMaterial >= 0) surfaces(surfaceMaterial) else null, if (volumes.length > 0 && volumeMaterial >= 0) volumes(volumeMaterial) else null, if (uvw != null) HashMap(Strings.defaultUWMap -> uvw) else null, null, null, null)
     triangles += triangle
     println(s"$triangle")
     return triangle

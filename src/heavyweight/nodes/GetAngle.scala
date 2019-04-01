@@ -12,8 +12,8 @@ case class GetAngle(override val inputs: Array[Container], override val outputs:
     } else {
       mesh.mesh(triangleIndex).supportingPlane.normal
     }
-    val angle: Float = Math.acos(ray.direction dotProduct normal).asInstanceOf[Float] * lightweight.geometry.Constants.ONE_DIVIDE_ON_RADIANS_TURNOVER
-    outputs(0).content = Color(angle.asInstanceOf[Float], angle.asInstanceOf[Float], angle.asInstanceOf[Float])
+    val angle: Float = Math.acos(ray.direction dotProduct normal).asInstanceOf[Float] * lightweight.geometry.Constants.ONE_DIVIDE_ON_RADIANS_TURNOVER * 2
+    outputs(0).content = Color(angle, angle, angle)
     outputs(1).content = lightweight.nodes.Numeric(angle)
   }
 }

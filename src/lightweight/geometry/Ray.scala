@@ -61,11 +61,12 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     result
   }
 
-  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, parentShader: RayOriginInfo): (Boolean, Color) = {
+  def renderSample(mesh: Mesh, world: World, triangleIndex: Int, shadersLeft: Int, parentShader: RayOriginInfo): (Boolean, Color, Float) = {
     val tracingResults = traceRay(mesh, world, triangleIndex)
     val hitTheSurface = tracingResults._1
     val smokes: HashMap[VolumeOutput, Int] = tracingResults._2
     val lamp = tracingResults._3
+    val time = tracingResults._1._3.asInstanceOf[Float]
     val newTriangleIndex = if (hitTheSurface != null && hitTheSurface._3 > Constants.EPSILON) hitTheSurface._1 else -1
     if (hitTheSurface._2 == null && !(hitTheSurface._3 > Constants.EPSILON) && lamp == null) {
       world.skySurface.run(mesh, world, -1, this, null, null, null, shadersLeft, parentShader)
@@ -76,14 +77,13 @@ case class Ray(origin: Vector3D, direction: Vector3D) {
     }
     if (lamp != null) {
       mesh.lamps(lamp._1).output.run(mesh, world, newTriangleIndex, this, hitTheSurface._2, null, null, shadersLeft, parentShader)
-      val result = (false, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults))
-      return result
+      return (false, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, mesh.lamps(lamp._1).output.outputs(0).content.asInstanceOf[Color], tracingResults), time)
     }
     if (hitTheSurface._2 != null && hitTheSurface._3 > Constants.EPSILON) {
-      (true, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, mesh.mesh(tracingResults._1._1).surface.outputs(0).content.asInstanceOf[Color], tracingResults))
+      (true, renderVolume(mesh, world, triangleIndex, shadersLeft, parentShader, mesh.mesh(tracingResults._1._1).surface.outputs(0).content.asInstanceOf[Color], tracingResults), time)
     } else {
       world.skySurface.run(mesh, world, -1, this, null, null, null, shadersLeft, parentShader)
-      (false, world.skySurface.outputs(0).content.asInstanceOf[Color])
+      (false, world.skySurface.outputs(0).content.asInstanceOf[Color], time)
     }
   }
 

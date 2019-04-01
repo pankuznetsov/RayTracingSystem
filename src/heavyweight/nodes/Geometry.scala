@@ -1,6 +1,6 @@
 package heavyweight.nodes
 
-import lightweight.{RayOriginInfo, World}
+import lightweight.{Functions, RayOriginInfo, World}
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.{Color, Container, Node}
 
@@ -20,7 +20,7 @@ case class Geometry(override val inputs: Array[Container], override val outputs:
     outputs(2).content = if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction))
       mesh.mesh(triangleIndex).supportingPlane.normal.invert() else mesh.mesh(triangleIndex).supportingPlane.normal
     outputs(3).content = if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction))
-      mesh.mesh(triangleIndex).supportingPlane.normal.invert() else mesh.mesh(triangleIndex).supportingPlane.normal
+      Functions.getSmoothNormal(mesh.mesh(triangleIndex), hitPoint) else mesh.mesh(triangleIndex).supportingPlane.normal
     outputs(4).content = if (mesh.mesh(triangleIndex).supportingPlane.normal.sameDirection(ray.direction)) lightweight.nodes.Numeric(0) else lightweight.nodes.Numeric(1)
     outputs(5).content = coordinates
   }

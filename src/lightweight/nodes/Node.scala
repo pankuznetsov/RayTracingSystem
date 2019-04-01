@@ -41,7 +41,7 @@ abstract class Node(val inputs: Array[Container], val outputs: Array[Container],
           val collision = lamp.isCollide(mesh, triangleIndex, toLight)
           if (collision != null) {
             val renderSample = toLight.renderSample(mesh, world, triangleIndex, shadersLeft, RayOriginInfo(this, false))
-            if  (renderSample._2 != null) sampleIntegral += renderSample._2 / collision._2 / lamp.samples
+            if  (renderSample._2 != null) sampleIntegral += renderSample._2 / (collision._2 * collision._2 * lamp.samples)
           } else {
             val r = toLight.renderSample(mesh, world, triangleIndex, shadersLeft, RayOriginInfo(this, false))._2
             if (r != null)

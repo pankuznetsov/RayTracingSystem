@@ -18,8 +18,8 @@ import scala.io.Source
 object Main {
 
   def quad(firstPoint: Vector3D, secondPoint: Vector3D, thirdPoint: Vector3D, binormal: Boolean, surface: SurfaceOutput, volume: VolumeOutput): (Triangle, Triangle) = {
-    val firstTriangle = Triangle(firstPoint, secondPoint, thirdPoint, binormal, surface, volume, null)
-    val secondTriangle = Triangle(firstPoint, firstPoint + thirdPoint - secondPoint, thirdPoint, binormal, surface, volume, null)
+    val firstTriangle = Triangle(firstPoint, secondPoint, thirdPoint, binormal, surface, volume, null, null, null, null)
+    val secondTriangle = Triangle(firstPoint, firstPoint + thirdPoint - secondPoint, thirdPoint, binormal, surface, volume, null, null, null, null)
     (firstTriangle, secondTriangle)
   }
 
@@ -64,10 +64,6 @@ object Main {
 
 
   def main(args: Array[String]): Unit = {
-    val t = Triangle(Vector3D(0, 0, 0), Vector3D(1, 0, 0), Vector3D(0, 1, 0), true, null, null, null)
-    val p = Plane(Vector3D(0, 0, 0), Vector3D(1, 0, 0))
-    println(t.getBoundingCircle)
-    /*
     val skyEmission = Factories.newEmission(Container(null, Color(0.3f, 0.5f, 0.75f)), Container(null, Numeric(1.3f)))
     val skyEmissionSurface = Factories.newSkySurface(skyEmission.outputs(0))
     val world = World(skyEmissionSurface, null, 1)
@@ -91,34 +87,36 @@ object Main {
     val rayTeleport = Factories.newRayTeleport()
     val refraction = Factories.newRefraction(Container(null, Color(0.9f, 0.8f, 0.7f)), Container(null, Numeric(0.05f)), Container(null, Numeric(2)), null, null, Container(null, Numeric(5)))
 
-    val gradient = Array[(Double, Color)]((0, Color(0, 0, 1)), (0.25, Color(0, 1, 0)), (0.5, Color(1, 0, 0)))
-    // val colorRamp = Factories.newColorRamp(texture.outputs(0), 0, gradient)
-
-    // val surfaceZero = Factories.newSurfaceOutput(diffuseZero.outputs(0))
     val appleDiffuse = Factories.newDiffuse(texture.outputs(0), Container(null, Numeric(1f)), Container(null, Numeric(4f)), null, light.outputs(0))
 
-    val surfaceZero = Factories.newSurfaceOutput(transparent.outputs(0))
-    val surfaceOne = Factories.newSurfaceOutput(diffuseZero.outputs(0))
-    val surfaceTwo = Factories.newSurfaceOutput(diffuseOne.outputs(0))
-    val surfaceThree = Factories.newSurfaceOutput(diffuseOne.outputs(0))
 
-    val lampEmissionRed = Factories.newEmission(Container(null, Color(1.2f, 0.95f, 0.7f)), Container(null, Numeric(5f)))
+    val lampEmissionRed = Factories.newEmission(Container(null, Color(1.3f, 0.95f, 0.65f)), Container(null, Numeric(19f)))
     val lampSurfaceRed = Factories.newLampOutput(lampEmissionRed.outputs(0))
     val lampEmissionGreen = Factories.newEmission(Container(null, Color(2.5f, 3.5f, 0.5f)), Container(null, Numeric(0f)))
     val lampSurfaceGreen = Factories.newLampOutput(lampEmissionGreen.outputs(0))
 
-    // val volumeEmission = Factories.newVolumeEmission(Container(null, Color(1.0f, 1.0f, 0.9f)), Container(null, Numeric(0.003)))
-    // val geometry = Factories.newGeometry()
-    // val checkerTexture = Factories.newChekcerTexture(geometry.outputs(5), Container(null, Numeric(5)), Container(null, Color(0.1f, 0.2f, 0.1f)), Container(null, Color(1f, 0.9f, 1f)))
-    val lightPath = Factories.newLightPath()
-    val volumeScatter = Factories.newVolumeScatter(Container(null, Color(0.6f, 0.6f, 0.6f)), Container(null, Numeric(0.5f)), Container(null, Numeric(0f)), null, light.outputs(0), 4)
-    val volumeAbsorption = Factories.newVolumeAbsorption(Container(null, Color(0.1f, 0.1f, 0.1f)), Container(null, Numeric(0.5f)))
-    val mix = Factories.newMix(lightPath.outputs(7), volumeScatter.outputs(0), volumeAbsorption.outputs(0))
-    val testVolumeOutput = Factories.newVolumeOutput(mix.outputs(0))
+    /* House material
+    * */
 
+    val pathToChecerPicture = new File("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\blender\\images\\textures\\checer.jpg")
+    val checerImage: BufferedImage = ImageIO.read(pathToChecerPicture.getCanonicalFile)
+    val checerTexture = Factories.newImageTexture(getUV.outputs(0), checerImage)
+    val checerDiffuse = Factories.newDiffuse(checerTexture.outputs(0), Container(null, Numeric(0.9f)), Container(null, Numeric(1)), null, light.outputs(0))
+
+    val angle = Factories.newGetAngle()
+
+    val checerGlossy = Factories.newGlossy(Container(null, Color(0.97f, 0.97f, 0.97f)), Container(null, Numeric(0.06f)), Container(null, Numeric(2f)), null, null)
+    val mixGlossyAndDiffuse = Factories.newMix(angle.outputs(1), checerDiffuse.outputs(0), checerGlossy.outputs(0))
+
+    val checerSurfaceOutput = Factories.newSurfaceOutput(mixGlossyAndDiffuse.outputs(0))
+
+    val horseDiffuse = Factories.newDiffuse(Container(null, Color(0.027f, 0.014f, 0.005f)), Container(null, Numeric(0.9f)), Container(null, Numeric(1)), null, light.outputs(0))
+    val horseGlossy = Factories.newGlossy(Container(null, Color(0.97f, 0.97f, 0.97f)), Container(null, Numeric(0.06f)), Container(null, Numeric(1f)), null, null)
+    val mixHorseGlossyAndDiffuse = Factories.newMix(angle.outputs(1), horseGlossy.outputs(0), horseDiffuse.outputs(0))
+    val horseSurface = Factories.newSurfaceOutput(mixHorseGlossyAndDiffuse.outputs(0))
     /*
     *  Home material! Home material! Home material! Home material! Home material! Home material! Home material! Home material!
-    * */
+    * */ /*
     val pathToWoodPicture = new File("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\blender\\images\\textures\\wood.jpg")
     val woodImage: BufferedImage = ImageIO.read(pathToWoodPicture.getCanonicalFile)
     val woodTexture = Factories.newImageTexture(getUV.outputs(0), woodImage)
@@ -145,14 +143,15 @@ object Main {
     val roofSurface = Factories.newSurfaceOutput(roof.outputs(0))
     val brickSurface = Factories.newSurfaceOutput(brickWall.outputs(0))
 
+*/
     /*
     * Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh! Mesh!
     * */
     // val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\cube.obj").getLines.mkString("\n")
-    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\home.obj").getLines.mkString("\n")
+    val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov S. A\\Documents\\alex\\Ray Tracer\\checer.obj").getLines.mkString("\n")
     // val stringOBJ: String = Source.fromFile("C:\\Users\\Kuznetsov Sergey\\Documents\\Ray Tracing\\x_wing.obj").getLines.mkString("\n")
     println(stringOBJ)
-    val loader = Loader(stringOBJ, Array(wallSurface, woodSurface, glassSurface, roofSurface, brickSurface), Array(), world)
+    val loader = Loader(stringOBJ, Array(horseSurface, checerSurfaceOutput), Array(), world)
     loader.loadObj()
     println("triangles: " + loader.triangles.length)
 
@@ -163,14 +162,13 @@ object Main {
       HashMap[UVMap, UVCoordinates](map -> UVCoordinates(Vector2D(0, 0), Vector2D(1600, 0), Vector2D(0, 1050)))) */
 
     // Mesh
-    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(0.6f).move(Vector3D(30, 40, 80))), Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
+    val mesh = Mesh(loader.triangles.toArray.map((f: Triangle) => f.scale(1.25f).move(Vector3D(140, 120, 110))), Array(/*PointLight(Vector3D(10, 110, 490), 35, Double.MaxValue, lampSurfaceRed, true, 1),*/
       PointLight(Vector3D(200, 20, 50), 1, Float.MaxValue, lampSurfaceRed, true, 0),
-      PointLight(Vector3D(-90, -151, 40), 44, Float.MaxValue, lampSurfaceRed, true, 2)), HashMap(0 -> 2, 1 -> 3))
+      PointLight(Vector3D(-90, -151, 40), 200, Float.MaxValue, lampSurfaceRed, true, 2)), HashMap(0 -> 2, 1 -> 3))
     // val mesh = Mesh(Array(firstTriangle),  Array(PointLight(Vector3D(70, 70, 10), 8, Double.MaxValue, lampSurfaceRed, true, 0)))
     val camera = lightweight.MulticoreCamera(Vector3D(0, 0, 0), Vector3D(0, 0, 1), 1f, 640, 480)
     println("started")
-    val image = camera.render(mesh, world, 1, 2, 10)
+    val image = camera.render(mesh, world, 3, 3, 16)
     displayImage(image, 640, 480)
-    */
   }
 }
