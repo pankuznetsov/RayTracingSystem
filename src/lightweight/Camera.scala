@@ -19,7 +19,6 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
             pixel += rayFromCamera.renderSample(mesh: Mesh, world: World, -1, shadersLeft, RayOriginInfo(null, true))._2
           }
         image(x)(y) = pixel / (samples * samples)
-        // println(s"pixel rendered - x: ${x}, y: ${y}")
       }
       println(s"line rendered: ${y}")
     }
