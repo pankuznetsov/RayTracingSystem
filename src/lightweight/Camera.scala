@@ -3,6 +3,9 @@ package lightweight
 import lightweight.geometry.{Mesh, Ray, Vector3D}
 import lightweight.nodes.Color
 
+/* Single threaded implementation of camera. It iterates throw all lines and pixels.
+As work is done, the amount of time is printed. Returns the final image.
+*/
 case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width: Int, height: Int) {
 
   def render(mesh: Mesh, world: World, samples: Int, shadersLeft: Int): Array[Array[Color]] = {
@@ -20,11 +23,11 @@ case class Camera(location: Vector3D, direction: Vector3D, scale: Double, width:
           }
         image(x)(y) = pixel / (samples * samples)
       }
-      println(s"line rendered: ${y}")
+      println(s"Line rendered: ${y}")
     }
     val endTime = System.currentTimeMillis()
     val time: Double = (endTime - startTime).asInstanceOf[Double] / 1000.0
-    println("time: %.2f".format(time))
+    println("Time: %.2f".format(time))
     image
   }
 
